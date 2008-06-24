@@ -1,0 +1,55 @@
+8
+
+dir
+18
+http://django-ae-utils.googlecode.com/svn/trunk/sessions
+http://django-ae-utils.googlecode.com/svn
+
+
+
+2008-06-24T03:25:55.983032Z
+18
+Sean.B.OConnor
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+73838ac5-5b4b-0410-86f6-d1f40d081aa5
+
+__init__.py
+file
+
+
+
+
+2008-06-02T11:48:52.000000Z
+d41d8cd98f00b204e9800998ecf8427e
+2008-04-21T06:41:12.826950Z
+4
+Sean.B.OConnor
+
+backends
+dir
+
+models.py
+file
+
+
+
+
+2008-06-02T11:48:52.000000Z
+1c3608ab2cbb4609fc6629da9a7d359d
+2008-04-21T06:41:12.826950Z
+4
+Sean.B.OConnor
+
