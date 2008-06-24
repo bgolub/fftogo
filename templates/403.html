@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Forbidden{% endblock %}
+
+{% block content %}
+<div class="error">
+The <a href="http://friendfeed.com/api/">FriendFeed API</a> returned a 403
+(Forbidden) for that request. It is possible that <a href="/">FF To Go</a> is
+being rate limited.
+</div>
+{% endblock %}

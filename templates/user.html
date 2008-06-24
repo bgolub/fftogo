@@ -1,0 +1,29 @@
+{% extends "entries.html" %}
+
+{% block title %}{{ profile.nickname }}{% endblock %}
+
+{% block favicon %}
+<link rel="shortcut icon" href="http://friendfeed.com/{{ profile.nickname }}/picture?size=small" type="image/jpeg" />
+{% endblock %}
+
+{% block below_share %}
+<h3>
+<img src="http://friendfeed.com/{{ profile.nickname }}/picture?size=small" alt="{{ profile.name }}" />
+{{ profile.name }}
+</h3>
+{% ifequal type 'comments' %}
+Comments
+{% else %}
+<a href="/{{ profile.nickname }}/comments/">Comments</a>
+{% endifequal %}
+{% ifequal type 'likes' %}
+Likes
+{% else %}
+<a href="/{{ profile.nickname }}/likes/">Likes</a>
+{% endifequal %}
+{% ifequal type 'discussion' %}
+See Both
+{% else %}
+<a href="/{{ profile.nickname }}/discussion/">See Both</a>
+{% endifequal %}
+{% endblock %}

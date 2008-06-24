@@ -1,0 +1,27 @@
+from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
+
+urlpatterns = patterns('',
+    (r'^$', 'fftogo.views.home'),
+    (r'^legal/$', direct_to_template, {'template': 'legal.html'}),
+    (r'^401/$', direct_to_template, {'template': '401.html'}),
+    (r'^403/$', direct_to_template, {'template': '403.html'}),
+    (r'^404/$', direct_to_template, {'template': '404.html'}),
+    (r'^500/$', direct_to_template, {'template': '500.html'}),
+    (r'^robots.txt$', direct_to_template, {'template': 'robots.txt'}),
+    (r'^public/$', 'fftogo.views.public'),
+    (r'^login/$', 'fftogo.views.login'),
+    (r'^logout/$', 'fftogo.views.logout'),
+    (r'^rooms?/(?P<nickname>[\w-]+)/$', 'fftogo.views.room'),
+    (r'^rooms/$', 'fftogo.views.rooms'),
+    (r'^settings/$', 'fftogo.views.settings'),
+    (r'^share/$', 'fftogo.views.share'),
+    (r'^search/$', 'fftogo.views.search'),
+    (r'^(?P<nickname>\w+)/$', 'fftogo.views.user'),
+    (r'^(?P<nickname>\w+)/(?P<type>\w+)/$', 'fftogo.views.user'),
+    (r'^e/(?P<entry>[\w-]+)/comment/$', 'fftogo.views.entry_comment'),
+    (r'^e/(?P<entry>[\w-]+)/c/(?P<comment>[\w-]+)/delete/$', 'fftogo.views.comment_delete'),
+    (r'^e/(?P<entry>[\w-]+)/c/(?P<comment>[\w-]+)/restore/$', 'fftogo.views.comment_restore'),
+    (r'^e/(?P<entry>[\w-]+)/like/$', 'fftogo.views.entry_like'),
+    (r'^e/(?P<entry>[\w-]+)/unlike/$', 'fftogo.views.entry_unlike'),
+)

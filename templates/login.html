@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <a href="http://friendfeed.com/"><img src="http://friendfeed.com/static/images/logo-small.png" alt="FriendFeed" /></a>
+    <form method="post" action="/login/">
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <th></th>
+                <td>
+                    <a href="http://friendfeed.com/remotekey" target="_blank">find your key</a>
+                </td>
+            </tr>
+            <tr>
+                <th></th>
+                <td>
+                    <input type="submit" value="Login" />
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

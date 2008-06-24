@@ -1,0 +1,89 @@
+html, body, form, ul, li {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+a, a:visited {
+    color: #1030cc;
+}
+
+a img {
+    border: 0;
+}
+
+p {
+    line-height: 1.4;
+}
+
+ul {
+    list-style-type: none;
+}
+
+#header {
+    padding: 1em;
+    background-color: #b3ecef;
+    border-bottom: 1px solid #94e4e8;
+    height: 40px;
+    line-height: 30px;
+}
+
+#header .logo {
+    font-weight: bold;
+    font-size: 20px;
+    float: left;
+    background-color: white;
+    padding: 7px;
+}
+
+#header .logo a,
+#header .logo a:visited {
+    color: #33ccff;
+}
+
+#header form {
+    float: right;
+}
+
+#content {
+    margin: 1em;
+}
+
+p.explanation,
+form.home {
+    text-align: center;
+}
+
+form.home input {
+    font-size: 20px;
+}
+
+table.conversation {
+    width: 100%;
+}
+
+table.conversation tr td {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.meta {
+    font-size: 70%;
+    color: #333;
+}
+
+#footer {
+    margin: 1em;
+    font-size: 12px;
+    clear: both;
+    color: gray;
+}
+
+#footer a,
+#footer a:visited {
+    color: #7777cc;
+}

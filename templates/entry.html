@@ -1,0 +1,30 @@
+{% load humanize %}
+
+<a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
+<a href="/{{ entry.user.nickname }}/">{{ entry.user.name }}</a>
+posted
+<a href="{{ entry.link }}">{{ entry.title }}</a>
+on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
+<div>
+{{ entry.updated|timesince }} ago
+{% if entry.likes %}
+-
+Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"person,people" }}
+{% endif %}
+{% if entry.comments %}
+<ul>
+{% for comment in entry.comments %}
+<li>
+{{ comment.body|urlizetrunc:30 }}
+-
+<a href="/{{ comment.user.nickname }}/">{{ comment.user.name }}</a>
+-
+{{ comment.date|timesince }} ago
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+<div>
+<a href="http://friendfeed.com/e/{{ entry.id }}">See in FriendFeed</a>
+</div>

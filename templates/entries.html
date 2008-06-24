@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+{% load mobilefriendfeed_tags %}
+
+{% block title %}{% endblock %}
+
+{% block rss %}
+<link rel="alternate" type="application/atom+xml" href="{{ request.path }}?output=atom{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" />
+{% endblock %}
+
+{% block above_content %}
+<a name="top"></a>
+{% if request.message %}
+<div class="message">
+{% ifequal request.message 'created' %}
+Entry created
+{% endifequal %}
+{% ifequal request.message 'deleted' %}
+Comment deleted
+-
+<a href="/e/{{ request.entry }}/c/{{ request.comment }}/restore/?next={{ request.path }}">Undo</a>
+{% endifequal %}
+{% ifequal request.message 'commented' %}
+Comment created
+-
+<a href="/e/{{ request.entry }}/c/{{ request.comment }}/delete/?next={{ request.path }}">Undo</a>
+{% endifequal %}
+{% ifequal request.message 'liked' %}
+Entry liked
+-
+<a href="/e/{{ request.entry }}/unlike/?next={{ request.path }}">Undo</a>
+{% endifequal %}
+{% ifequal request.message 'un-liked' %}
+Entry un-liked
+-
+<a href="/e/{{ request.entry }}/like/?next={{ request.path }}">Undo</a>
+{% endifequal %}
+</div>
+{% endif %}
+{% block share %}
+{% if request.session.nickname %}
+<form method="post" action="/share/">
+<input type="hidden" name="next" value="{{ request.path }}" />
+{% if room %}
+<input type="hidden" name="room" value="{{ room }}" />
+{% endif %}
+<input name="title" />
+<input type="submit" value="Share" />
+</form>
+{% endif %}
+{% endblock %}
+{% block below_share %}
+{% endblock %}
+{% endblock %}
+
+{% block content %}
+<ul class="entries">
+{% for entry in entries %}
+<li id="{{ entry.id }}" class="entry">
+{% if not entry.hidden %}
+<a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
+{% if entry.room %}
+<a href="/rooms/{{ entry.room.nickname }}">{{ entry.room.name }}</a>:
+{% endif %}
+<a href="/{{ entry.user.nickname }}/">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
+posted
+<a href="{% if request.session.googlemobileproxy %}{{ entry.link|gwpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
+on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
+<div class="meta">
+<span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
+{% if request.session.nickname %}
+-
+<a href="/e/{{ entry.id }}/comment/?next={{ request.path }}">Comment</a>
+{% ifnotequal request.session.nickname entry.user.nickname %}
+-
+{% if request.session.nickname|liked:entry %}
+<a href="/e/{{ entry.id }}/unlike/?next={{ request.path }}">Un-like</a>
+{% else %}
+<a href="/e/{{ entry.id }}/like/?next={{ request.path }}">Like</a>
+{% endif %}
+{% endifnotequal %}
+{% endif %}
+{% if entry.likes %}
+-
+Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"person,people" }}
+{% endif %}
+{% if entry.comments %}
+<ul class="comments">
+{% for comment in entry.comments %}
+<li id="{{ comment.id }}" class="comment">
+{% if request.session.googlemobileproxy %}
+{{ comment.body|urlizetrunc:30|gwpize|safe }}
+{% else %}
+{{ comment.body|urlizetrunc:30 }}
+{% endif %}
+-
+<a href="/{{ comment.user.nickname }}/">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
+-
+<span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
+{% ifequal request.session.nickname comment.user.nickname %}
+-
+<a href="/e/{{ entry.id }}/c/{{ comment.id }}/delete/?next={{ request.path }}">Delete</a>
+{% else %}
+{% ifequal request.session.nickname entry.user.nickname %}
+-
+<a href="/e/{{ entry.id }}/c/{{ comment.id }}/delete/?next={{ request.path }}">Delete</a>
+{% endifequal %}
+{% endifequal %}
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+{% else %}
+<a href="http://friendfeed.com/e/{{ entry.id }}" class="hidden">Entry hidden</a>
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% if hidden %}
+<div class="hidden">
+{{ hidden|length|apnumber|capfirst }} entr{{ hidden|length|pluralize:"y,ies"}} hidden
+</div>
+{% endif %}
+{% endblock %}
+
+{% block below_content %}
+<div id="nav">
+{% if has_previous %}
+7
+<a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="7">Previous</a>
+{% endif %}
+9
+<a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="9">Next</a>
+*
+<a href="#top" accesskey="*">Top</a>
+</div>
+{% endblock %}

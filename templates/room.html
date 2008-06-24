@@ -1,0 +1,23 @@
+{% extends "entries.html" %}
+
+{% load mobilefriendfeed_tags %}
+
+{% block title %}{{ profile.name }}{% endblock %}
+
+{% block favicon %}
+<link rel="shortcut icon" href="http://friendfeed.com/rooms/{{ room }}/picture?size=small" type="image/jpeg" />
+{% endblock %}
+
+{% block below_share %}
+<p>
+<img src="http://friendfeed.com/rooms/{{ room }}/picture?size=small" alt="{{ room }}" />
+<strong>{{ profile.name }}</strong>
+<span>
+{% if request.session.googlemobileproxy %}
+{{ profile.description|urlizetrunc:30|gwpize|safe }}
+{% else %}
+{{ profile.description|urlizetrunc:30 }}
+{% endif %}
+</span>
+</p>
+{% endblock %}

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>FF To Go - {% block title %}{% endblock %}</title>
+{% block rss %}
+{% endblock %}
+{% block favicon %}
+<link rel="shortcut icon" href="/static/images/favicon.png" type="image/png" />
+{% endblock %}
+{% block style %}
+<style type="text/css">
+body, ul, li, form, input { margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; font-size: {% if request.session.fontsize %}{{ request.session.fontsize }}{% else %}10{% endif %}pt; }
+ul { list-style: none; }
+a, a:visited { color: #1030cc; }
+a img { border: none; }
+#header { background-color: #ecf2fa; border-bottom: 1px solid #6797d3; margin-bottom: 5px; padding: 5px; }
+#header ul li { display: inline; margin-right: 5px; }
+#content { padding: 5px; }
+.message, .error { font-weight: bold; margin-bottom: 5px; padding: 5px; }
+.message { background-color: #fdedc1; border: 1px solid #fad163; }
+.error { background-color: #feb8b8; border: 1px solid #be3333; }
+ul.entries { margin-top: 10px; }
+ul.entries li.entry, ul.rooms li.room { margin-bottom: 10px; }
+ul.comments li.comment { margin-top: 5px; }
+.meta, ul.comments { color: gray; margin-top: 2px; margin-left: 5px; }
+#footer a, #footer a:visited, .meta a, .meta a:visited, ul.comments a, ul.commsts a:visited { color: #7777cc; }
+.hidden { color: gray; font-style: italic; }
+#nav { margin-top: 5px; }
+#footer { color: gray; margin-top: 5px; padding: 5px; }
+</style>
+<!--#if expr="(${HTTP_USER_AGENT} = /iPhone/)"-->
+<meta name="viewport" content="width=320" />
+<!--#endif -->
+<!--#if expr="(${HTTP_USER_AGENT} = /iPod/)"-->
+<meta name="viewport" content="width=320" />
+<!--#endif -->
+{% endblock %}
+</head>
+<body>
+<div id="header">
+<ul>
+{% if request.session.nickname %}
+<li>
+0
+<a href="/" accesskey="0">Friends</a>
+</li>
+<li>
+1
+<a href="/rooms/" accesskey="1">Rooms</a>
+</li>
+<li>
+2
+<a href="/{{ request.session.nickname }}/" accesskey="2">Me</a>
+</li>
+{% else %}
+<li>
+0
+<a href="/login/" accesskey="0">Login</a>
+</li>
+{% endif %}
+<li>
+3
+<a href="/public/" accesskey="3">Everyone</a>
+</li>
+<li>
+4
+<a href="/search/" accesskey="4">Search</a>
+</li>
+</ul>
+</div>
+<div id="content">
+{% block above_content %}
+{% endblock %}
+{% block content %}
+{% endblock %}
+{% block below_content %}
+{% endblock %}
+</div>
+<div id="footer">
+{% block footer %}
+&copy;2008
+-
+<a href="mailto:bgolub@benjamingolub.com">Contact</a>
+-
+<a href="http://friendfeed.com/rooms/fftogo">Feedback</a>
+-
+<a href="/legal/">Legal</a>
+-
+Created by <a href="http://benjamingolub.com/">Benjamin Golub</a>
+-
+<a href="/settings/">Settings</a>
+{% if request.session.nickname %}
+-
+<a href="/logout/">Logout</a>
+{% endif %}
+{% endblock %}
+</div>
+</body>
+</html>
