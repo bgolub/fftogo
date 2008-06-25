@@ -70,7 +70,15 @@ Entry un-liked
 <a href="/{{ entry.user.nickname }}/">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
 {% endif %}
 posted
+{% ifequal entry.service.id 'twitter' %}
+{% if request.session.googlemobileproxy %}
+"{{ entry.title|urlizetrunc:30|gmpize|safe }}"
+{% else %}
+"{{ entry.title|urlizetrunc:30 }}"
+{% endif %}
+{% else %}
 <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
+{% endifequal %}
 on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
 <div class="meta">
 <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
