@@ -72,9 +72,9 @@ Entry un-liked
 posted
 {% ifequal entry.service.id 'twitter' %}
 {% if request.session.googlemobileproxy %}
-"{{ entry.title|urlizetrunc:30|gmpize|safe }}"
+"{{ entry.title|urlizetrunc:30|twitterize|gmpize|safe }}"
 {% else %}
-"{{ entry.title|urlizetrunc:30 }}"
+"{{ entry.title|urlizetrunc:30|twitterize|safe }}"
 {% endif %}
 {% else %}
 <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>

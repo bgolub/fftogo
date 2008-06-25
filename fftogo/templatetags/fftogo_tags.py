@@ -16,11 +16,18 @@ def gmpize(value, arg=None):
     return soup
 
 @register.filter
-def liked(value, arg):
-    return value in [like['user']['nickname'] for like in arg['likes']]
-
-@register.filter
 def likeable(value, arg):
     if value['anonymous']:
         return True
     return value['user']['nickname'] != arg
+
+@register.filter
+def liked(value, arg):
+    return value in [like['user']['nickname'] for like in arg['likes']]
+
+@register.filter
+def twitterize(value):
+    import re
+    for user in re.findall(r'@(\w+)', value):
+        value = value.replace('@%s' % user, '@<a href="http://twitter.com/%s">%s</a>' % (user, user))
+    return value
