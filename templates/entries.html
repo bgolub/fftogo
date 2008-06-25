@@ -13,6 +13,9 @@
 <a name="top"></a>
 {% if request.message %}
 <div class="message">
+{% ifequal request.message 'settings' %}
+Did you know that you can <a href="/settings">change your font size and other settings</a>?
+{% endifequal %}
 {% ifequal request.message 'created' %}
 Entry created
 {% endifequal %}

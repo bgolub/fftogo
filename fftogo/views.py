@@ -186,7 +186,7 @@ def login(request):
                 data = f.fetch_home_feed(num=1)
                 request.session['nickname'] = form.data['nickname']
                 request.session['key'] = form.data['key']
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/?message=settings')
             except Exception, e:
                 if e[0] == 401:
                     del request.session['nickname']
