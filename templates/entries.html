@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% load humanize %}
-{% load mobilefriendfeed_tags %}
+{% load fftogo_tags %}
 
 {% block title %}{% endblock %}
 
@@ -60,26 +60,28 @@ Entry un-liked
 <li id="{{ entry.id }}" class="entry">
 {% if not entry.hidden %}
 <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
+{% if not entry.anonymous %}
 {% if entry.room %}
 <a href="/rooms/{{ entry.room.nickname }}">{{ entry.room.name }}</a>:
 {% endif %}
 <a href="/{{ entry.user.nickname }}/">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
+{% endif %}
 posted
-<a href="{% if request.session.googlemobileproxy %}{{ entry.link|gwpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
+<a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
 on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
 <div class="meta">
 <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
 {% if request.session.nickname %}
 -
 <a href="/e/{{ entry.id }}/comment/?next={{ request.path }}">Comment</a>
-{% ifnotequal request.session.nickname entry.user.nickname %}
+{% if entry|likeable:request.session.nickname %}
 -
 {% if request.session.nickname|liked:entry %}
 <a href="/e/{{ entry.id }}/unlike/?next={{ request.path }}">Un-like</a>
 {% else %}
 <a href="/e/{{ entry.id }}/like/?next={{ request.path }}">Like</a>
 {% endif %}
-{% endifnotequal %}
+{% endif %}
 {% endif %}
 {% if entry.likes %}
 -
@@ -90,7 +92,7 @@ Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"pers
 {% for comment in entry.comments %}
 <li id="{{ comment.id }}" class="comment">
 {% if request.session.googlemobileproxy %}
-{{ comment.body|urlizetrunc:30|gwpize|safe }}
+{{ comment.body|urlizetrunc:30|gmpize|safe }}
 {% else %}
 {{ comment.body|urlizetrunc:30 }}
 {% endif %}

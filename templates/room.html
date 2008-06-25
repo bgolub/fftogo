@@ -1,6 +1,6 @@
 {% extends "entries.html" %}
 
-{% load mobilefriendfeed_tags %}
+{% load fftogo_tags %}
 
 {% block title %}{{ profile.name }}{% endblock %}
 
@@ -14,7 +14,7 @@
 <strong>{{ profile.name }}</strong>
 <span>
 {% if request.session.googlemobileproxy %}
-{{ profile.description|urlizetrunc:30|gwpize|safe }}
+{{ profile.description|urlizetrunc:30|gmpize|safe }}
 {% else %}
 {{ profile.description|urlizetrunc:30 }}
 {% endif %}
