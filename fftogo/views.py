@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -6,9 +7,12 @@ from google.appengine.api import memcache
 
 import friendfeed
 
-CACHE_TIME = 30
-NUM = 30
-VIA = 'fftogo'
+CACHE_TIME = settings.CACHE_TIME
+FONT_SIZE = settings.FONT_SIZE
+GMP = settings.GMP
+NEW_WINDOW = settings.NEW_WINDOW
+NUM = settings.NUM
+VIA = settings.VIA
 
 def atom(entries):
     f = feedgenerator.Atom1Feed(
@@ -355,9 +359,9 @@ def settings(request):
             request.session['num'] = form.data['num']
     else:
         initial = {
-            'fontsize': int(request.session.get('fontsize', 10)),
-            'newwindow': request.session.get('newwindow', False),
-            'googlemobileproxy': request.session.get('googlemobileproxy', False),
+            'fontsize': int(request.session.get('fontsize', FONT_SIZE)),
+            'newwindow': request.session.get('newwindow', NEW_WINDOW),
+            'googlemobileproxy': request.session.get('googlemobileproxy', GMP),
             'num': int(request.session.get('num', 30)),
         }
         form = SettingsForm(initial=initial)

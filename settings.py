@@ -93,3 +93,15 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 )
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30 * 2
+
+CACHE_TIME = 30
+
+FONT_SIZE = 10
+
+GMP = False
+
+NEW_WINDOW = False
+
+NUM = 30
+
+VIA = 'fftogo'
