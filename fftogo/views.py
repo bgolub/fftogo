@@ -250,12 +250,17 @@ def room(request, nickname):
     try:
         data = f.fetch_room_feed(nickname, num=num, start=start,
             service=service)
-        profile = f.fetch_room_profile(nickname)
     except Exception, e:
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
         return HttpResponseRedirect('/%s/' % e)
+    try:
+        profile = f.fetch_room_profile(nickname)
+    except Exception, e:
+        profile = {
+            'nickname': nickname,
+        }
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
@@ -263,7 +268,6 @@ def room(request, nickname):
         'next': start + num,
         'hidden': hidden,
         'profile': profile,
-        'room': nickname,
     }
     if start > 0:
         extra_context['has_previous'] = True
