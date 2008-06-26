@@ -1,7 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.template.loader import render_to_string
 from django.utils import feedgenerator
 from google.appengine.api import memcache
 
@@ -22,7 +21,7 @@ def atom(entries):
         f.add_item(
             title = entry['title'],
             link = entry['link'],
-            description = render_to_string('entry.html', {'entry': entry}),
+            description = '<a href="http://friendfeed.com/e/%s">View in FriendFeed</a>' % entry['id'],
             author_name = entry['user']['name'],
             pubdate = entry['updated'],
         )
