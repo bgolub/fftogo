@@ -268,6 +268,7 @@ def room(request, nickname):
         'next': start + num,
         'hidden': hidden,
         'profile': profile,
+        'room': nickname,
     }
     if start > 0:
         extra_context['has_previous'] = True
