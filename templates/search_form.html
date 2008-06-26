@@ -6,10 +6,11 @@
     <p>
         The <a href="/">FF To Go</a> search syntax is the same as the
         <a href="http://friendfeed.com/">FriendFeed</a> syntax.  If you are
-        <a href="/login/">logged in</a> it will search your FriendFeed feed.
-        You can search everyone by passing who:everyone into the form below.
+        <a href="{% url login %}">logged in</a> it will search your FriendFeed
+        feed. You can search everyone by passing who:everyone into the form
+        below.
     </p>
-    <form method="get" action="/search/">
+    <form method="get" action="{{ request.path }}">
         <table>
             {{ form.as_table }}
             <tr>

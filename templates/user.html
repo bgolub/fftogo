@@ -14,16 +14,16 @@
 {% ifequal type 'comments' %}
 Comments
 {% else %}
-<a href="/{{ profile.nickname }}/comments/">Comments</a>
+<a href="{% url user_type profile.nickname,"comments" %}">Comments</a>
 {% endifequal %}
 {% ifequal type 'likes' %}
 Likes
 {% else %}
-<a href="/{{ profile.nickname }}/likes/">Likes</a>
+<a href="{% url user_type profile.nickname,"likes" %}">Likes</a>
 {% endifequal %}
 {% ifequal type 'discussion' %}
 See Both
 {% else %}
-<a href="/{{ profile.nickname }}/discussion/">See Both</a>
+<a href="{% url user_type profile.nickname,"discussion" %}">See Both</a>
 {% endifequal %}
 {% endblock %}

@@ -44,29 +44,29 @@ ul.comments li.comment { margin-top: 5px; }
 {% if request.session.nickname %}
 <li>
 0
-<a href="/" accesskey="0">Friends</a>
+<a href="{% url home %}" accesskey="0">Friends</a>
 </li>
 <li>
 1
-<a href="/rooms/" accesskey="1">Rooms</a>
+<a href="{% url rooms %}" accesskey="1">Rooms</a>
 </li>
 <li>
 2
-<a href="/{{ request.session.nickname }}/" accesskey="2">Me</a>
+<a href="{% url user request.session.nickname %}" accesskey="2">Me</a>
 </li>
 {% else %}
 <li>
 0
-<a href="/login/" accesskey="0">Login</a>
+<a href="{% url login %}" accesskey="0">Login</a>
 </li>
 {% endif %}
 <li>
 3
-<a href="/public/" accesskey="3">Everyone</a>
+<a href="{% url public %}" accesskey="3">Everyone</a>
 </li>
 <li>
 4
-<a href="/search/" accesskey="4">Search</a>
+<a href="{% url search %}" accesskey="4">Search</a>
 </li>
 </ul>
 </div>
@@ -86,16 +86,16 @@ ul.comments li.comment { margin-top: 5px; }
 -
 <a href="http://friendfeed.com/rooms/fftogo">Feedback</a>
 -
-<a href="/legal/">Legal</a>
+<a href="{% url legal %}">Legal</a>
 -
 <a href="http://github.com/bgolub/fftogo/tree/master">View Source</a>
 -
 Created by <a href="http://benjamingolub.com/">Benjamin Golub</a>
 -
-<a href="/settings/">Settings</a>
+<a href="{% url settings %}">Settings</a>
 {% if request.session.nickname %}
 -
-<a href="/logout/">Logout</a>
+<a href="{% url logout %}">Logout</a>
 {% endif %}
 {% endblock %}
 </div>

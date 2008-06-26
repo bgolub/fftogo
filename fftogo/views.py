@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -33,7 +34,7 @@ def atom(entries):
 
 def comment_delete(request, entry, comment):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
@@ -42,7 +43,7 @@ def comment_delete(request, entry, comment):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=deleted&entry=%s&comment=%s' % (entry, comment)
@@ -53,7 +54,7 @@ def comment_delete(request, entry, comment):
 
 def comment_restore(request, entry, comment):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
@@ -62,7 +63,7 @@ def comment_restore(request, entry, comment):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
@@ -73,7 +74,7 @@ def comment_restore(request, entry, comment):
 
 def entry_comment(request, entry):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     from fftogo.forms import CommentForm
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -86,7 +87,7 @@ def entry_comment(request, entry):
                 if e[0] == 401:
                     del request.session['nickname']
                     del request.session['key']
-                return HttpResponseRedirect('/%s/' % e)
+                return HttpResponseRedirect(reverse(str(e)))
             next = form.data['next']
             if '?' in next:
                 next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
@@ -107,7 +108,7 @@ def entry_comment(request, entry):
 
 def entry_like(request, entry):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
@@ -116,7 +117,7 @@ def entry_like(request, entry):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=liked&entry=%s' % entry
@@ -127,7 +128,7 @@ def entry_like(request, entry):
 
 def entry_unlike(request, entry):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
@@ -136,7 +137,7 @@ def entry_unlike(request, entry):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=un-liked&entry=%s' % entry
@@ -147,7 +148,7 @@ def entry_unlike(request, entry):
 
 def home(request):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
@@ -162,7 +163,7 @@ def home(request):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
@@ -194,7 +195,7 @@ def login(request):
                 if e[0] == 401:
                     del request.session['nickname']
                     del request.session['key']
-                return HttpResponseRedirect('/%s/' % e)
+                return HttpResponseRedirect(reverse(str(e)))
     else:
         form = LoginForm()
     extra_context['form'] = form
@@ -225,7 +226,7 @@ def public(request):
             if e[0] == 401:
                 del request.session['nickname']
                 del request.session['key']
-            return HttpResponseRedirect('/%s/' % e)
+            return HttpResponseRedirect(reverse(str(e)))
         memcache.set(key, data, CACHE_TIME)
     entries = data['entries']
     extra_context = {
@@ -258,7 +259,7 @@ def room(request, nickname):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     try:
         profile = f.fetch_room_profile(nickname)
     except Exception, e:
@@ -283,7 +284,7 @@ def room(request, nickname):
 
 def rooms(request):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
@@ -292,7 +293,7 @@ def rooms(request):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     extra_context = {
         'rooms': data['rooms'],
     }
@@ -330,7 +331,7 @@ def search(request):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
@@ -370,7 +371,7 @@ def settings(request):
 
 def share(request):
     if not request.session.get('nickname', None):
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     if request.method == 'POST':
@@ -381,7 +382,7 @@ def share(request):
                 if e[0] == 401:
                     del request.session['nickname']
                     del request.session['key']
-                return HttpResponseRedirect('/%s/' % e)
+                return HttpResponseRedirect(reverse(str(e)))
     next = request.POST.get('next', '/')
     if '?' in next:
         next = next + '&message=created'
@@ -420,7 +421,7 @@ def user(request, nickname, type=None):
         if e[0] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect('/%s/' % e)
+        return HttpResponseRedirect(reverse(str(e)))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
