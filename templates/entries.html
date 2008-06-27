@@ -108,7 +108,7 @@ Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"pers
 {{ comment.body|urlizetrunc:30 }}
 {% endif %}
 -
-<a href="{% url user comment.user.nickname %}/">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
+<a href="{% url user comment.user.nickname %}">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
 -
 <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
 {% ifequal request.session.nickname comment.user.nickname %}
