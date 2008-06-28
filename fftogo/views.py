@@ -429,9 +429,6 @@ def user(request, nickname, type=None):
                 service=service)
         profile = f.fetch_user_profile(nickname)
     except Exception, e:
-        if e[0] == 401:
-            del request.session['nickname']
-            del request.session['key']
         return HttpResponseRedirect(reverse(str(e)))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
