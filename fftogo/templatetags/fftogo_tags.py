@@ -1,6 +1,12 @@
 from django import template
+from google.appengine.api import memcache
 
 register = template.Library()
+
+@register.filter
+def can_edit(value):
+    key = 'comment_%s' % value['id']
+    return memcache.get(key)
  
 @register.filter
 def gmpize(value, arg=None):

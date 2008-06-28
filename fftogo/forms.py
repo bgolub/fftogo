@@ -7,6 +7,7 @@ class IntegerWidget(forms.TextInput):
 
 class CommentForm(forms.Form):
     body = forms.CharField(label='Comment', widget=forms.Textarea)
+    comment = forms.CharField(widget=forms.HiddenInput, required=False)
     entry = forms.CharField(widget=forms.HiddenInput)
     next = forms.CharField(widget=forms.HiddenInput)
 

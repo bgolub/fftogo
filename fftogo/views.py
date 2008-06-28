@@ -82,17 +82,24 @@ def entry_comment(request, entry):
             f = friendfeed.FriendFeed(request.session['nickname'],
                 request.session['key'])
             try:
-                comment = f.add_comment(form.data['entry'], form.data['body'], via=VIA)
+                if form.data['comment']:
+                    f.edit_comment(form.data['entry'], form.data['comment'], form.data['body'])
+                    comment = form.data['comment']
+                else:
+                    comment = f.add_comment(form.data['entry'], form.data['body'], via=VIA)
             except Exception, e:
                 if e[0] == 401:
                     del request.session['nickname']
                     del request.session['key']
                 return HttpResponseRedirect(reverse(str(e)))
+            key = 'comment_%s' % comment
+            result = memcache.set(key, form.data['body'])
             next = form.data['next']
-            if '?' in next:
-                next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
-            else:
-                next = next + '?message=commented&entry=%s&comment=%s' % (entry, comment)
+            if not form.data['comment']:
+                if '?' in next:
+                    next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
+                else:
+                    next = next + '?message=commented&entry=%s&comment=%s' % (entry, comment)
             next = next + '#%s' % comment
             return HttpResponseRedirect(next)
     else:
@@ -100,6 +107,10 @@ def entry_comment(request, entry):
             'entry': entry,
             'next': request.GET.get('next', '/'),
         }
+        if 'comment' in request.GET:
+            key = 'comment_%s' % request.GET['comment']
+            initial['body'] = memcache.get(key)
+            initial['comment'] = request.GET['comment']
         form = CommentForm(initial=initial)
     extra_context = {
         'form': form,
