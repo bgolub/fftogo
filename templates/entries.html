@@ -77,7 +77,15 @@ posted
 "{{ entry.title|urlizetrunc:30|twitterize|safe }}"
 {% endif %}
 {% else %}
+{% if entry|is_message %}
+{% if request.session.googlemobileproxy %}
+"{{ entry.title|urlizetrunc:30|gmpize|safe }}"
+{% else %}
+"{{ entry.title|urlizetrunc:30 }}"
+{% endif %}
+{% else %}
 <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
+{% endif %}
 {% endifequal %}
 on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
 <div class="meta">

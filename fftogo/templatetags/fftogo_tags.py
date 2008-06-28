@@ -16,6 +16,10 @@ def gmpize(value, arg=None):
     return soup
 
 @register.filter
+def is_message(value):
+    return value['link'] == 'http://friendfeed.com/e/%s' % value['id']
+
+@register.filter
 def likeable(value, arg):
     if value['anonymous']:
         return True
