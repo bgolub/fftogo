@@ -93,7 +93,7 @@ def entry_comment(request, entry):
                     del request.session['key']
                 return HttpResponseRedirect(reverse(str(e)))
             key = 'comment_%s' % comment
-            result = memcache.set(key, form.data['body'])
+            memcache.set(key, form.data['body'])
             next = form.data['next']
             if not form.data['comment']:
                 if '?' in next:
