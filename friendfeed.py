@@ -38,6 +38,7 @@ import base64
 import datetime
 import time
 import urllib
+# Google App Engine does not allow urllib2; we use urlfetch instead
 from google.appengine.api import urlfetch
 
 # We require a JSON parsing library. These seem to be the most popular.
@@ -46,6 +47,7 @@ try:
     parse_json = lambda s: cjson.decode(s.decode("utf-8"), True)
 except ImportError:
     try:
+        # Django includes simplejson
         from django.utils import simplejson
         parse_json = lambda s: simplejson.loads(s.decode("utf-8"))
     except ImportError:
@@ -64,16 +66,29 @@ class FriendFeed(object):
         self.auth_key = auth_key
 
     def fetch_user_profile(self, nickname, **kwargs):
+        """Returns a users profile for the given nickname.
+
+        Authentication is required for private users.
+        """
         return self._fetch_feed(
             "/api/user/" + urllib.quote_plus(nickname) + "/profile", **kwargs)
 
     def fetch_room_profile(self, nickname, **kwargs):
+        """Returns a rooms profile for the given nickname.
+
+        Authentication *should* be required for private rooms but will always
+        401 at the moment.
+        """
         return self._fetch_feed(
             "/api/room/" + urllib.quote_plus(nickname) + "/profile", **kwargs)
 
-    def fetch_room_feed(self, room, **kwargs):
+    def fetch_room_feed(self, nickname, **kwargs):
+        """Returns a rooms feed with the given room nickname
+
+        Authentication is required for private rooms.
+        """
         return self._fetch_feed(
-            "/api/feed/room/" + urllib.quote_plus(room), **kwargs)
+            "/api/feed/room/" + urllib.quote_plus(nickname), **kwargs)
 
     def fetch_public_feed(self, **kwargs):
         """Returns the public feed with everyone's public entries.
@@ -146,7 +161,8 @@ class FriendFeed(object):
 
     def publish_link(self, title, link, comment=None, image_urls=[],
                      images=[], via=None, room=None):
-        """Publishes the given link/title to the authenticated user's feed.
+        """Publishes the given link/title to the authenticated user's feed or
+        to a room.
 
         Authentication is always required.
 
@@ -256,12 +272,15 @@ class FriendFeed(object):
         return result
 
     def _fetch(self, uri, post_args, **url_args):
+        # Use Django's urlencode because it is unicode safe
         from django.utils.http import urlencode
         url_args["format"] = "json"
         args = urlencode(url_args)
         url = "http://friendfeed.com" + uri + "?" + args
         headers = {}
         if post_args is not None:
+            # If we are POSTing then set the method/content-type (urllib2
+            # does this for you but urlfetch does not)
             payload = urlencode(post_args)
             method = urlfetch.POST
             headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -274,6 +293,8 @@ class FriendFeed(object):
             headers["Authorization"] = "Basic %s" % token
         result = urlfetch.fetch(url, payload=payload, method=method,
             headers=headers)
+        # urllib2 will raise an Exception when you get any error code but
+        # urlfetch does not; raise our own (TODO: make an Exception class)
         if result.status_code != 200:
             raise Exception, result.status_code
         return parse_json(result.content)

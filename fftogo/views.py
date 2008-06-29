@@ -16,6 +16,10 @@ NUM = settings.NUM
 VIA = settings.VIA
 
 def atom(entries):
+    '''Build and return an Atom feed.
+
+    entries is a list of entries straight from the FriendFeed API.
+    '''
     f = feedgenerator.Atom1Feed(
         title = 'FF To Go',
         link = 'http://www.fftogo.com',
@@ -33,6 +37,13 @@ def atom(entries):
     return HttpResponse(f.writeString('utf-8'))
 
 def comment_delete(request, entry, comment):
+    '''Delete a comment.
+
+    Authentcation is required.
+
+    entry is the entry id.
+    comment is the comment id.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -53,6 +64,13 @@ def comment_delete(request, entry, comment):
     return HttpResponseRedirect(next)
 
 def comment_restore(request, entry, comment):
+    '''Restore a comment (undelete it).
+    
+    Authentication is required.
+
+    entry is the entry id.
+    comment is the comment id.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -73,6 +91,14 @@ def comment_restore(request, entry, comment):
     return HttpResponseRedirect(next)
 
 def entry_comment(request, entry):
+    '''Comment on an entry.
+
+    Authentication is required.
+
+    entry is the entry id.
+    An optional parameter, comment, in the GET dict will allow you to edit an
+    entry (assuming its body already exists in memcache).
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     from fftogo.forms import CommentForm
@@ -118,6 +144,12 @@ def entry_comment(request, entry):
     return render_to_response('comment.html', extra_context, context_instance=RequestContext(request))
 
 def entry_like(request, entry):
+    '''Like an entry.
+
+    Authentication is required.
+
+    entry is the entry id to be liked.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -138,6 +170,12 @@ def entry_like(request, entry):
     return HttpResponseRedirect(next)
 
 def entry_unlike(request, entry):
+    '''Un-like an entry.
+
+    Authentication is required.
+
+    entry is the entry id to be un-liked.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -158,6 +196,10 @@ def entry_unlike(request, entry):
     return HttpResponseRedirect(next)
 
 def home(request):
+    '''Render a users home feed.
+
+    Authentication is required.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -190,6 +232,8 @@ def home(request):
     return render_to_response('home.html', extra_context, context_instance=RequestContext(request))
 
 def login(request):
+    '''Log a user in.
+    '''
     from fftogo.forms import LoginForm
     extra_context = {}
     if request.method == 'POST':
@@ -213,11 +257,18 @@ def login(request):
     return render_to_response('login.html', extra_context, context_instance = RequestContext(request))
 
 def logout(request):
+    '''Log a user out.
+    '''
     request.session['nickname'] = None
     request.session['key'] = None
     return HttpResponseRedirect('/')
 
 def public(request):
+    ''' Render the public feed.
+
+    Authentication is not required and not used.  Memcache saves this data so
+    we don't have to hit FriendFeed as often for it.
+    '''
     f = friendfeed.FriendFeed()
     try:
         start = int(request.GET.get('start', 0))
@@ -252,6 +303,12 @@ def public(request):
     return render_to_response('public.html', extra_context, context_instance=RequestContext(request))
 
 def room(request, nickname):
+    '''Render a room feed.
+
+    Authentication is not required but is used if set.
+
+    nickname is the room's nickname.
+    '''
     if request.session.get('nickname', None):
         f = friendfeed.FriendFeed(request.session['nickname'],
             request.session['key'])
@@ -294,6 +351,10 @@ def room(request, nickname):
     return render_to_response('room.html', extra_context, context_instance=RequestContext(request))
 
 def rooms(request):
+    '''Display a list of the authenticated users rooms.
+
+    Authentication is required.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -311,6 +372,13 @@ def rooms(request):
     return render_to_response('rooms.html', extra_context, context_instance=RequestContext(request))
 
 def search(request):
+    '''Render a search feed.
+
+    Authentication is not required but is used if set.
+
+    Search operates on a 'search' paramater in the GET dict that works the same
+    way the FriendFeed search works (who:everyone would search the public feed).
+    ''' 
     from fftogo.forms import SearchForm
     if not 'search' in request.GET:
         extra_context = {
@@ -360,6 +428,11 @@ def search(request):
     return render_to_response('search.html', extra_context, context_instance=RequestContext(request))
 
 def settings(request):
+    '''Set a number of settings.
+    
+    Authentication is not required (because these settings are just stored in
+    a session; not on a user object).
+    '''
     from fftogo.forms import SettingsForm
     extra_context = {}
     if request.method == 'POST':
@@ -381,6 +454,11 @@ def settings(request):
     return render_to_response('settings.html', extra_context, context_instance = RequestContext(request))
 
 def share(request):
+    '''Publish a message to the users feed or a room (if 'room' is set in the
+    POST dict.
+
+    Authentication is required.
+    '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -403,6 +481,13 @@ def share(request):
     return HttpResponseRedirect(next)
 
 def user(request, nickname, type=None):
+    '''Render a users feed.
+
+    Authentication is not required but is used if set.
+
+    nickname is the user's nickname.
+    type can be None (default), 'comments', 'likes', or 'discussion'
+    '''
     if request.session.get('nickname', None):
         f = friendfeed.FriendFeed(request.session['nickname'],
             request.session['key'])
