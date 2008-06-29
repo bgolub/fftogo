@@ -196,6 +196,7 @@ class FriendFeed(object):
             post_args["comment"] = comment
         if via:
             post_args["via"] = via
+        images = images[:]
         if room:
             post_args["room"] = room
         for image_url in image_urls:
