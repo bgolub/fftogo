@@ -63,10 +63,12 @@ Entry un-liked
 <li id="{{ entry.id }}" class="entry">
 {% if not entry.hidden %}
 <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
-{% if not entry.anonymous %}
 {% if entry.room %}
+{% ifnotequal entry.room.nickname room %}
 <a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
+{% endifnotequal %}
 {% endif %}
+{% if not entry.anonymous %}
 <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
 {% endif %}
 posted
