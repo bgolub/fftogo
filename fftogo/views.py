@@ -240,7 +240,7 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             try:
-                nickname = form.data['nickname'].strip()
+                nickname = form.data['nickname'].strip().lower()
                 f = friendfeed.FriendFeed(nickname, form.data['key'])
                 data = f.fetch_home_feed(num=1)
                 request.session['nickname'] = nickname
