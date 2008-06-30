@@ -120,13 +120,9 @@ Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"pers
 -
 <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
 {% ifequal request.session.nickname comment.user.nickname %}
-(
-{% if comment|can_edit %}
-<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&next={{ request.path }}">edit</a>
+(<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&body={{ comment.body|urlencode }}&next={{ request.path }}">edit</a>
 |
-{% endif %}
-<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>
-)
+<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
 {% else %}
 {% ifequal request.session.nickname entry.user.nickname %}
 (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)

@@ -97,7 +97,8 @@ def entry_comment(request, entry):
 
     entry is the entry id.
     An optional parameter, comment, in the GET dict will allow you to edit an
-    entry (assuming its body already exists in memcache).
+    entry.
+    An optional parameter, body, in the GET dict will initialize the form.
     '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
@@ -118,8 +119,6 @@ def entry_comment(request, entry):
                     del request.session['nickname']
                     del request.session['key']
                 return HttpResponseRedirect(reverse(str(e)))
-            key = 'comment_%s' % comment
-            memcache.set(key, form.data['body'])
             next = form.data['next']
             if not form.data['comment']:
                 if '?' in next:
@@ -130,13 +129,11 @@ def entry_comment(request, entry):
             return HttpResponseRedirect(next)
     else:
         initial = {
+            'body': request.GET.get('body', None),
+            'comment': request.GET.get('comment', None),
             'entry': entry,
             'next': request.GET.get('next', '/'),
         }
-        if 'comment' in request.GET:
-            key = 'comment_%s' % request.GET['comment']
-            initial['body'] = memcache.get(key)
-            initial['comment'] = request.GET['comment']
         form = CommentForm(initial=initial)
     extra_context = {
         'form': form,
