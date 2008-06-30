@@ -23,6 +23,8 @@ def gmpize(value, arg=None):
 
 @register.filter
 def is_message(value):
+    if value['service']['id'] == 'googletalk':
+       return True 
     return value['link'] == 'http://friendfeed.com/e/%s' % value['id']
 
 @register.filter
