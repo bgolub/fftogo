@@ -12,7 +12,7 @@
 <strong>{{ profile.name }}</strong>
 <div class="section">
 {% for service in profile.services %}
-<a href="{{ request.path }}?service={{ service.id }}"><img src="{{ service.iconUrl }}" alt="{{ service.name }}" /></a>
+<a class="service" href="{{ request.path }}?service={{ service.id }}"><img src="{{ service.iconUrl }}" alt="{{ service.name }}" /></a>
 {% endfor %}
 </div>
 <div class="section">
