@@ -160,7 +160,8 @@ class FriendFeed(object):
         return self.publish_link(title=message, link=None, **kwargs)
 
     def publish_link(self, title, link, comment=None, image_urls=[],
-                     images=[], via=None, audio_urls=[], audio=[], room=None):
+                     images=[], via=None, audio_urls=[], audio=[],
+                     room=None):
         """Publishes the given link/title to the authenticated user's feed or
         to a room.
 
@@ -203,8 +204,6 @@ class FriendFeed(object):
         if via:
             post_args["via"] = via
         images = images[:]
-        if room:
-            post_args["room"] = room
         for image_url in image_urls:
             images.append({"url": image_url})
         for i, image in enumerate(images):
@@ -218,6 +217,8 @@ class FriendFeed(object):
             post_args["audio%d_url" % i] = clip["url"]
             if clip.get("title"):
                 post_args["audio%d_title" % i] = clip["title"]
+        if room:
+            post_args["room"] = room
         feed = self._fetch_feed("/api/share", post_args=post_args)
         return feed["entries"][0]
 
