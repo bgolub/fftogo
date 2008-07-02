@@ -160,7 +160,7 @@ class FriendFeed(object):
         return self.publish_link(title=message, link=None, **kwargs)
 
     def publish_link(self, title, link, comment=None, image_urls=[],
-                     images=[], via=None, room=None):
+                     images=[], via=None, audio_urls=[], audio=[], room=None):
         """Publishes the given link/title to the authenticated user's feed or
         to a room.
 
@@ -172,6 +172,12 @@ class FriendFeed(object):
         else, you can specify images[] instead, which should be a list of
         dicts of the form {"url": ..., "link": ...}. The thumbnail with the
         given url will link to the specified link.
+
+        audio_urls is a list of MP3 URLs that will show up as a play
+        button beneath the link. You can optionally supply audio[]
+        instead, which should be a list of dicts of the form
+        {"url": ..., "title": ...}. The given title will appear when the
+        audio file is played.
 
         We return the parsed/published entry as returned from the server, which
         includes the final thumbnail URLs as well as the ID for the new entry.
@@ -205,6 +211,13 @@ class FriendFeed(object):
             post_args["image%d_url" % i] = image["url"]
             if image.get("link"):
                 post_args["image%d_link" % i] = image["link"]
+        audio = audio[:]
+        for audio_url in audio_urls:
+            audio.append({"url": audio_url})
+        for i, clip in enumerate(audio):
+            post_args["audio%d_url" % i] = clip["url"]
+            if clip.get("title"):
+                post_args["audio%d_title" % i] = clip["title"]
         feed = self._fetch_feed("/api/share", post_args=post_args)
         return feed["entries"][0]
 
