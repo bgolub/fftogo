@@ -26,7 +26,7 @@ def is_message(value):
     if value['service']['id'] == 'googletalk':
         return True 
     if value['service']['id'] == 'jaiku':
-        return value['service']['profileUrl'] in value['link']
+        return value['service']['profileUrl'].lower() in value['link'].lower()
     return value['link'] == 'http://friendfeed.com/e/%s' % value['id']
 
 @register.filter
