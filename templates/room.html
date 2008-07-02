@@ -5,19 +5,20 @@
 {% block title %}{% firstof profile.name profile.nickname %}{% endblock %}
 
 {% block favicon %}
-<link rel="shortcut icon" href="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=small" type="image/jpeg" />
+<link rel="shortcut icon" href="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=medium" type="image/jpeg" />
 {% endblock %}
 
 {% block below_share %}
-<p>
-<img src="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=small" alt="{% firstof profile.name profile.nickname %}" />
+<div class="profile">
+<img class="picture" src="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=medium" alt="{% firstof profile.name profile.nickname %}" />
+<div class="section">
 <strong>{% firstof profile.name profile.nickname %}</strong>
-<span>
+</div>
+<div class="section">
 {% if request.session.googlemobileproxy %}
 {{ profile.description|urlizetrunc:30|gmpize|safe }}
 {% else %}
 {{ profile.description|urlizetrunc:30 }}
 {% endif %}
-</span>
-</p>
+</div>
 {% endblock %}
