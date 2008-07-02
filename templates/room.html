@@ -11,14 +11,13 @@
 {% block below_share %}
 <div class="profile">
 <img class="picture" src="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=medium" alt="{% firstof profile.name profile.nickname %}" />
-<div class="section">
 <strong>{% firstof profile.name profile.nickname %}</strong>
-</div>
 <div class="section">
 {% if request.session.googlemobileproxy %}
 {{ profile.description|urlizetrunc:30|gmpize|safe }}
 {% else %}
 {{ profile.description|urlizetrunc:30 }}
 {% endif %}
+</div>
 </div>
 {% endblock %}
