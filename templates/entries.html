@@ -94,7 +94,6 @@
                 <div class="meta">
                     <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
                     {% if entry.via %}
-                        -
                         via <a class="via" href="{{ entry.via.url }}">{{ entry.via.name }}</a>
                     {% endif %}
                     {% if request.session.nickname %}
@@ -127,7 +126,6 @@
                                     -
                                     <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
                                     {% if comment.via %}
-                                        -
                                         via <a class="via" href="{{ comment.via.url }}">{{ comment.via.name }}</a>
                                     {% endif %}
                                     {% ifequal request.session.nickname comment.user.nickname %}
