@@ -93,6 +93,10 @@
                 on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
                 <div class="meta">
                     <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
+                    {% if entry.via %}
+                        -
+                        via <a class="via" href="{{ entry.via.url }}">{{ entry.via.name }}</a>
+                    {% endif %}
                     {% if request.session.nickname %}
                         -
                         <a href="{% url entry_comment entry.id %}?next={{ request.path }}">Comment</a>
@@ -122,6 +126,10 @@
                                     <a href="{% url user comment.user.nickname %}">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
                                     -
                                     <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
+                                    {% if comment.via %}
+                                        -
+                                        via <a class="via" href="{{ comment.via.url }}">{{ comment.via.name }}</a>
+                                    {% endif %}
                                     {% ifequal request.session.nickname comment.user.nickname %}
                                         (<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&body={{ comment.body|urlencode }}&next={{ request.path }}">edit</a>
                                         |
