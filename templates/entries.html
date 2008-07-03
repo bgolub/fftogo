@@ -6,159 +6,159 @@
 {% block title %}{% endblock %}
 
 {% block rss %}
-<link rel="alternate" type="application/atom+xml" href="{{ request.path }}?output=atom{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" />
+    <link rel="alternate" type="application/atom+xml" href="{{ request.path }}?output=atom{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" />
 {% endblock %}
 
 {% block above_content %}
-<a name="top"></a>
-{% if request.message %}
-<div class="message">
-{% ifequal request.message 'settings' %}
-Did you know that you can <a href="{% url settings %}">change your font size and other settings</a>?
-{% endifequal %}
-{% ifequal request.message 'created' %}
-Entry created
-{% endifequal %}
-{% ifequal request.message 'deleted' %}
-Comment deleted
--
-<a href="{% url comment_restore request.entry,request.comment %}?next={{ request.path }}">Undo</a>
-{% endifequal %}
-{% ifequal request.message 'commented' %}
-Comment created
--
-<a href="{% url comment_delete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
-{% endifequal %}
-{% ifequal request.message 'liked' %}
-Entry liked
--
-<a href="{% url entry_unlike request.entry %}?next={{ request.path }}">Undo</a>
-{% endifequal %}
-{% ifequal request.message 'un-liked' %}
-Entry un-liked
--
-<a href="{% url entry_like request.entry %}?next={{ request.path }}">Undo</a>
-{% endifequal %}
-</div>
-{% endif %}
-{% block share %}
-{% if request.session.nickname %}
-<form method="post" action="/share/">
-<input type="hidden" name="next" value="{{ request.path }}" />
-{% if room %}
-<input type="hidden" name="room" value="{{ room }}" />
-{% endif %}
-<input name="title" />
-<input type="submit" value="Share" />
-</form>
-{% endif %}
-{% endblock %}
-{% block below_share %}
-{% endblock %}
+    <a name="top"></a>
+    {% if request.message %}
+        <div class="message">
+            {% ifequal request.message 'settings' %}
+                Did you know that you can <a href="{% url settings %}">change your font size and other settings</a>?
+            {% endifequal %}
+            {% ifequal request.message 'created' %}
+                Entry created
+            {% endifequal %}
+            {% ifequal request.message 'deleted' %}
+                Comment deleted
+                -
+                <a href="{% url comment_restore request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+            {% endifequal %}
+            {% ifequal request.message 'commented' %}
+                Comment created
+                -
+                <a href="{% url comment_delete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+            {% endifequal %}
+            {% ifequal request.message 'liked' %}
+                Entry liked
+                -
+                <a href="{% url entry_unlike request.entry %}?next={{ request.path }}">Undo</a>
+            {% endifequal %}
+            {% ifequal request.message 'un-liked' %}
+                Entry un-liked
+                -
+                <a href="{% url entry_like request.entry %}?next={{ request.path }}">Undo</a>
+            {% endifequal %}
+        </div>
+    {% endif %}
+    {% block share %}
+        {% if request.session.nickname %}
+            <form method="post" action="/share/">
+                <input type="hidden" name="next" value="{{ request.path }}" />
+                {% if room %}
+                    <input type="hidden" name="room" value="{{ room }}" />
+                {% endif %}
+                <input name="title" />
+                <input type="submit" value="Share" />
+            </form>
+        {% endif %}
+    {% endblock %}
+    {% block below_share %}
+    {% endblock %}
 {% endblock %}
 
 {% block content %}
-<ul class="entries">
-{% for entry in entries %}
-<li id="{{ entry.id }}" class="entry">
-{% if not entry.hidden %}
-<a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
-{% if entry.room %}
-{% ifnotequal entry.room.nickname room %}
-<a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
-{% endifnotequal %}
-{% endif %}
-{% if not entry.anonymous %}
-{% ifnotequal entry.user.nickname profile.nickname %}
-<a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
-{% endifnotequal %}
-{% endif %}
-posted
-{% ifequal entry.service.id 'twitter' %}
-{% if request.session.googlemobileproxy %}
-"{{ entry.title|urlizetrunc:30|twitterize|gmpize|safe }}"
-{% else %}
-"{{ entry.title|urlizetrunc:30|twitterize|safe }}"
-{% endif %}
-{% else %}
-{% if entry|is_message %}
-{% if request.session.googlemobileproxy %}
-"{{ entry.title|urlizetrunc:30|gmpize|safe }}"
-{% else %}
-"{{ entry.title|urlizetrunc:30 }}"
-{% endif %}
-{% else %}
-<a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
-{% endif %}
-{% endifequal %}
-on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
-<div class="meta">
-<span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
-{% if request.session.nickname %}
--
-<a href="{% url entry_comment entry.id %}?next={{ request.path }}">Comment</a>
-{% if entry|likeable:request.session.nickname %}
--
-{% if request.session.nickname|liked:entry %}
-<a href="{% url entry_unlike entry.id %}?next={{ request.path }}">Un-like</a>
-{% else %}
-<a href="{% url entry_like entry.id %}?next={{ request.path }}">Like</a>
-{% endif %}
-{% endif %}
-{% endif %}
-{% if entry.likes %}
--
-Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"person,people" }}
-{% endif %}
-{% if entry.comments %}
-<ul class="comments">
-{% for comment in entry.comments %}
-<li id="{{ comment.id }}" class="comment">
-{% if request.session.googlemobileproxy %}
-{{ comment.body|urlizetrunc:30|gmpize|safe }}
-{% else %}
-{{ comment.body|urlizetrunc:30 }}
-{% endif %}
--
-<a href="{% url user comment.user.nickname %}">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
--
-<span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
-{% ifequal request.session.nickname comment.user.nickname %}
-(<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&body={{ comment.body|urlencode }}&next={{ request.path }}">edit</a>
-|
-<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
-{% else %}
-{% ifequal request.session.nickname entry.user.nickname %}
-(<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
-{% endifequal %}
-{% endifequal %}
-</li>
-{% endfor %}
-</ul>
-{% endif %}
-</div>
-{% else %}
-<a href="http://friendfeed.com/e/{{ entry.id }}" class="hidden">Entry hidden</a>
-{% endif %}
-</li>
-{% endfor %}
-</ul>
-{% if hidden %}
-<div class="hidden">
-{{ hidden|length|apnumber|capfirst }} entr{{ hidden|length|pluralize:"y,ies"}} hidden
-</div>
-{% endif %}
+    <ul class="entries">
+        {% for entry in entries %}
+            <li id="{{ entry.id }}" class="entry">
+            {% if not entry.hidden %}
+                <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
+                {% if entry.room %}
+                    {% ifnotequal entry.room.nickname room %}
+                        <a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
+                    {% endifnotequal %}
+                {% endif %}
+                {% if not entry.anonymous %}
+                    {% ifnotequal entry.user.nickname profile.nickname %}
+                        <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
+                    {% endifnotequal %}
+                {% endif %}
+                posted
+                {% ifequal entry.service.id 'twitter' %}
+                    {% if request.session.googlemobileproxy %}
+                        "{{ entry.title|urlizetrunc:30|twitterize|gmpize|safe }}"
+                    {% else %}
+                        "{{ entry.title|urlizetrunc:30|twitterize|safe }}"
+                    {% endif %}
+                {% else %}
+                    {% if entry|is_message %}
+                        {% if request.session.googlemobileproxy %}
+                            "{{ entry.title|urlizetrunc:30|gmpize|safe }}"
+                        {% else %}
+                            "{{ entry.title|urlizetrunc:30 }}"
+                        {% endif %}
+                    {% else %}
+                        <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
+                    {% endif %}
+                {% endifequal %}
+                on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
+                <div class="meta">
+                    <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
+                    {% if request.session.nickname %}
+                        -
+                        <a href="{% url entry_comment entry.id %}?next={{ request.path }}">Comment</a>
+                        {% if entry|likeable:request.session.nickname %}
+                            -
+                            {% if request.session.nickname|liked:entry %}
+                                <a href="{% url entry_unlike entry.id %}?next={{ request.path }}">Un-like</a>
+                            {% else %}
+                                <a href="{% url entry_like entry.id %}?next={{ request.path }}">Like</a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                    {% if entry.likes %}
+                        -
+                        Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"person,people" }}
+                    {% endif %}
+                    {% if entry.comments %}
+                        <ul class="comments">
+                            {% for comment in entry.comments %}
+                                <li id="{{ comment.id }}" class="comment">
+                                    {% if request.session.googlemobileproxy %}
+                                        {{ comment.body|urlizetrunc:30|gmpize|safe }}
+                                    {% else %}
+                                        {{ comment.body|urlizetrunc:30 }}
+                                    {% endif %}
+                                    -
+                                    <a href="{% url user comment.user.nickname %}">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
+                                    -
+                                    <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
+                                    {% ifequal request.session.nickname comment.user.nickname %}
+                                        (<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&body={{ comment.body|urlencode }}&next={{ request.path }}">edit</a>
+                                        |
+                                        <a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                    {% else %}
+                                        {% ifequal request.session.nickname entry.user.nickname %}
+                                            (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                        {% endifequal %}
+                                    {% endifequal %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% else %}
+                <a href="http://friendfeed.com/e/{{ entry.id }}" class="hidden">Entry hidden</a>
+            {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    {% if hidden %}
+        <div class="hidden">
+            {{ hidden|length|apnumber|capfirst }} entr{{ hidden|length|pluralize:"y,ies"}} hidden
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block below_content %}
-<div id="nav">
-{% if has_previous %}
-7
-<a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="7">Previous</a>
-{% endif %}
-9
-<a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="9">Next</a>
-*
-<a href="#top" accesskey="*">Top</a>
-</div>
+    <div id="nav">
+        {% if has_previous %}
+            7
+            <a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="7">Previous</a>
+        {% endif %}
+        9
+        <a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="9">Next</a>
+        *
+        <a href="#top" accesskey="*">Top</a>
+    </div>
 {% endblock %}

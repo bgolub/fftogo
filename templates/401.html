@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Unauthorized{% endblock %}
+{% block title %}
+    Unauthorized
+{% endblock %}
 
 {% block content %}
-<div class="error">
-The <a href="http://friendfeed.com/api/">FriendFeed API</a> returned a 401
-(Unauthorized) for that request. Is your nickname or remote key incorrect? If
-you were previously logged in then has your
-<a href="http://friendfeed.com/remotekey" target="_blank">remote key</a>
-changed? <a href="/logout/">Log out</a> and <a href="/login/">log back in</a>.
-</div>
+    <div class="error">
+        The <a href="http://friendfeed.com/api/">FriendFeed API</a> returned a 
+        401 (Unauthorized) for that request. Is your nickname or remote key
+        incorrect? If you were previously logged in then has your
+        <a href="http://friendfeed.com/remotekey" target="_blank">remote key</a>
+        changed? <a href="/logout/">Log out</a> and
+        <a href="/login/">log back in</a>.
+    </div>
 {% endblock %}

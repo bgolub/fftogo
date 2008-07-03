@@ -2,14 +2,16 @@
 
 {% load humanize %}
 
-{% block title %}Rooms{% endblock %}
+{% block title %}
+    Rooms
+{% endblock %}
 
 {% block content %}
-<ul class="rooms">
-{% for room in rooms %}
-<li class="room">
-<a href="{% url room room.nickname %}">{{ room.name }}</a>
-</li>
-{% endfor %}
-</ul>
+    <ul class="rooms">
+        {% for room in rooms %}
+            <li class="room">
+                <a href="{% url room room.nickname %}">{{ room.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
