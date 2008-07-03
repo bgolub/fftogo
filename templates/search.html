@@ -3,3 +3,10 @@
 {% block title %}
     {{ title }}
 {% endblock %}
+
+{% block above_content %}
+    <form method="get" action="{{ request.path }}">
+        {{ form.search }}
+        <input type="submit" value="Search" />
+    </form>
+{% endblock %}
