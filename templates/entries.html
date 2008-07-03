@@ -69,7 +69,9 @@ Entry un-liked
 {% endifnotequal %}
 {% endif %}
 {% if not entry.anonymous %}
+{% ifnotequal entry.user.nickname profile.nickname %}
 <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
+{% endifnotequal %}
 {% endif %}
 posted
 {% ifequal entry.service.id 'twitter' %}
