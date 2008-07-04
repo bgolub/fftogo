@@ -22,6 +22,10 @@ def gmpize(value, arg=None):
     return soup
 
 @register.filter
+def is_admin(value, arg):
+    return value in [administrator['nickname'] for administrator in arg['administrators']]
+
+@register.filter
 def is_message(value):
     if value['service']['id'] == 'googletalk':
         return True 

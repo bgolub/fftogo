@@ -135,6 +135,12 @@
                                     {% else %}
                                         {% ifequal request.session.nickname entry.user.nickname %}
                                             (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                        {% else %}
+                                            {% if room %}
+                                                {% if request.session.nickname|is_admin:profile %}
+                                                    (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                                {% endif %}
+                                            {% endif %}
                                         {% endifequal %}
                                     {% endifequal %}
                                 </li>
