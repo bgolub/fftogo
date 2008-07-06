@@ -321,9 +321,6 @@ def room(request, nickname):
         data = f.fetch_room_feed(nickname, num=num, start=start,
             service=service)
     except Exception, e:
-        if e[0] == 401:
-            del request.session['nickname']
-            del request.session['key']
         return HttpResponseRedirect(reverse(str(e)))
     try:
         profile = f.fetch_room_profile(nickname)
