@@ -320,9 +320,21 @@ def home(request):
         return HttpResponseRedirect(reverse(str(e)))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
+    new_start = start
+    while len(entries) < num:
+        new_start = new_start + num
+        try:
+            data = f.fetch_home_feed(num=num, start=new_start, service=service)
+        except:
+            break
+        more_entries = [entry for entry in data['entries'] if not entry['hidden']]
+        more_hidden = [entry for entry in data['entries'] if entry['hidden']]
+        entries.extend(more_entries)
+        hidden.extend(more_hidden)
+    entries = entries[:num]
     extra_context = {
         'entries': entries,
-        'next': start + num,
+        'next': start + num + len(hidden),
         'hidden': hidden,
     }
     if start > 0:
