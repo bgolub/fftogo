@@ -140,6 +140,58 @@ def entry_comment(request, entry):
     }
     return render_to_response('comment.html', extra_context, context_instance=RequestContext(request))
 
+def entry_delete(request, entry):
+    '''Delete an entry.
+
+    Authentcation is required.
+
+    entry is the entry id.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    try:
+        f.delete_entry(entry)
+    except Exception, e:
+        if e[0] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return HttpResponseRedirect(reverse(str(e)))
+    next = request.GET.get('next', '/')
+    if '?' in next:
+        next = next + '&message=deleted&entry=%s' % entry
+    else:
+        next = next + '?message=deleted&entry=%s' % entry
+    next = next + '#%s' % entry
+    return HttpResponseRedirect(next)
+
+def entry_undelete(request, entry):
+    '''Un-delete an entry.
+
+    Authentcation is required.
+
+    entry is the entry id.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    try:
+        f.undelete_entry(entry)
+    except Exception, e:
+        if e[0] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return HttpResponseRedirect(reverse(str(e)))
+    next = request.GET.get('next', '/')
+    if '?' in next:
+        next = next + '&message=shared&entry=%s' % entry
+    else:
+        next = next + '?message=shared&entry=%s' % entry
+    next = next + '#%s' % entry
+    return HttpResponseRedirect(next)
+
 def entry_hide(request, entry):
     '''Hide an entry.
 
@@ -521,9 +573,9 @@ def share(request):
                 return HttpResponseRedirect(reverse(str(e)))
     next = request.POST.get('next', '/')
     if '?' in next:
-        next = next + '&message=created'
+        next = next + '&message=shared&entry=%s' % entry['id']
     else:
-        next = next + '?message=created'
+        next = next + '?message=shared&entry=%s' % entry['id']
     next += '#%s' % entry['id'] 
     return HttpResponseRedirect(next)
 

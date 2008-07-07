@@ -15,13 +15,21 @@
             {% ifequal request.message 'settings' %}
                 Did you know that you can <a href="{% url settings %}">change your font size and other settings</a>?
             {% endifequal %}
-            {% ifequal request.message 'created' %}
+            {% ifequal request.message 'shared' %}
                 Entry created
+                -
+                <a href="{% url entry_delete request.entry %}"?next={{ request.path }}">Undo</a>
             {% endifequal %}
             {% ifequal request.message 'deleted' %}
-                Comment deleted
-                -
-                <a href="{% url comment_undelete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+                {% if request.comment %}
+                    Comment deleted
+                    -
+                    <a href="{% url comment_undelete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+                {% else %}
+                    Entry deleted
+                    -
+                    <a href="{% url entry_undelete request.entry %}"?next={{ request.path }}">Undo</a>
+                {% endif %}
             {% endifequal %}
             {% ifequal request.message 'commented' %}
                 Comment created
@@ -123,6 +131,10 @@
                                 <a href="{% url entry_hide entry.id %}?next={{ request.path }}">Hide</a>
                             {% endifnotequal %}
                         {% endif %}
+                        {% ifequal entry.user.nickname request.session.nickname %}
+                            -
+                            <a href="{% url entry_delete entry.id %}?next={{ request.path }}">Delete</a>
+                        {% endifequal %}
                     {% endif %}
                     {% if entry.likes %}
                         -
