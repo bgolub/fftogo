@@ -21,7 +21,7 @@
             {% ifequal request.message 'deleted' %}
                 Comment deleted
                 -
-                <a href="{% url comment_restore request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+                <a href="{% url comment_undelete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
             {% ifequal request.message 'commented' %}
                 Comment created

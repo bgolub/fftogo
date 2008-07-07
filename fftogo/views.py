@@ -63,8 +63,8 @@ def comment_delete(request, entry, comment):
     next = next + '#%s' % entry
     return HttpResponseRedirect(next)
 
-def comment_restore(request, entry, comment):
-    '''Restore a comment (undelete it).
+def comment_undelete(request, entry, comment):
+    '''Un-delete a comment.
     
     Authentication is required.
 
