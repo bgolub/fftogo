@@ -39,7 +39,7 @@ def atom(entries):
 def comment_delete(request, entry, comment):
     '''Delete a comment.
 
-    Authentcation is required.
+    Authentication is required.
 
     entry is the entry id.
     comment is the comment id.
@@ -143,7 +143,7 @@ def entry_comment(request, entry):
 def entry_delete(request, entry):
     '''Delete an entry.
 
-    Authentcation is required.
+    Authentication is required.
 
     entry is the entry id.
     '''
@@ -169,7 +169,7 @@ def entry_delete(request, entry):
 def entry_undelete(request, entry):
     '''Un-delete an entry.
 
-    Authentcation is required.
+    Authentication is required.
 
     entry is the entry id.
     '''
