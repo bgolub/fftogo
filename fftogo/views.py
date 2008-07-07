@@ -292,14 +292,15 @@ def login(request):
             try:
                 nickname = form.data['nickname'].strip().lower()
                 f = friendfeed.FriendFeed(nickname, form.data['key'])
-                data = f.fetch_home_feed(num=1)
+                data = f.validate()
                 request.session['nickname'] = nickname
                 request.session['key'] = form.data['key']
                 return HttpResponseRedirect('/?message=settings')
             except Exception, e:
                 if e[0] == 401:
-                    del request.session['nickname']
-                    del request.session['key']
+                    if 'nickname' in request.session:
+                        del request.session['nickname']
+                        del request.session['key']
                 return HttpResponseRedirect(reverse(str(e)))
     else:
         form = LoginForm()
