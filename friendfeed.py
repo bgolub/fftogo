@@ -65,7 +65,7 @@ class FriendFeed(object):
         self.auth_nickname = auth_nickname
         self.auth_key = auth_key
 
-    def validate(self,):
+    def validate(self):
         return self._fetch_feed("/api/validate")
 
     def hide_entry(self, entry_id):
