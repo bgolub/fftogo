@@ -218,7 +218,6 @@ def entry_unhide(request, entry):
     next = next + '#%s' % entry
     return HttpResponseRedirect(next)
 
-
 def entry_unlike(request, entry):
     '''Un-like an entry.
 
