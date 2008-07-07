@@ -38,6 +38,16 @@
                 -
                 <a href="{% url entry_like request.entry %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
+            {% ifequal request.message 'hidden' %}
+                Entry hidden
+                -
+                <a href="{% url entry_unhide request.entry %}?next={{ request.path }}">Undo</a>
+            {% endifequal %}
+            {% ifequal request.message 'un-hidden' %}
+                Entry un-hidden
+                -
+                <a href="{% url entry_hide request.entry %}?next={{ request.path }}">Undo</a>
+            {% endifequal %}
         </div>
     {% endif %}
     {% block share %}
@@ -106,6 +116,12 @@
                             {% else %}
                                 <a href="{% url entry_like entry.id %}?next={{ request.path }}">Like</a>
                             {% endif %}
+                        {% endif %}
+                        {% if not entry.room %}
+                            {% ifnotequal entry.user.nickname request.session.nickname %}
+                                -
+                                <a href="{% url entry_hide entry.id %}?next={{ request.path }}">Hide</a>
+                            {% endifnotequal %}
                         {% endif %}
                     {% endif %}
                     {% if entry.likes %}

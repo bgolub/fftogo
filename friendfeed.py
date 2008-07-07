@@ -65,6 +65,31 @@ class FriendFeed(object):
         self.auth_nickname = auth_nickname
         self.auth_key = auth_key
 
+    def validate(self,):
+        return self._fetch_feed("/api/validate")
+
+    def hide_entry(self, entry_id):
+        return self._fetch_feed("/api/entry/hide", {
+            "entry": entry_id,
+        })
+ 
+    def unhide_entry(self, entry_id):
+        return self._fetch_feed("/api/entry/hide", {
+            "entry": entry_id,
+            "unhide": '1',
+        })
+ 
+    def delete_entry(self, entry_id):
+        return self._fetch_feed("/api/entry/delete", {
+            "entry": entry_id,
+        })
+ 
+    def undelete_entry(self, entry_id):
+        return self._fetch_feed("/api/entry/delete", {
+            "entry": entry_id,
+            "undelete": '1',
+        })
+
     def fetch_user_profile(self, nickname, **kwargs):
         """Returns a users profile for the given nickname.
 

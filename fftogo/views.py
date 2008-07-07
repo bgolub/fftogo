@@ -140,6 +140,32 @@ def entry_comment(request, entry):
     }
     return render_to_response('comment.html', extra_context, context_instance=RequestContext(request))
 
+def entry_hide(request, entry):
+    '''Hide an entry.
+
+    Authentication is required.
+
+    entry is the entry id to be hidden.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    try:
+        f.hide_entry(entry)
+    except Exception, e:
+        if e[0] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return HttpResponseRedirect(reverse(str(e)))
+    next = request.GET.get('next', '/')
+    if '?' in next:
+        next = next + '&message=hidden&entry=%s' % entry
+    else:
+        next = next + '?message=hidden&entry=%s' % entry
+    next = next + '#%s' % entry
+    return HttpResponseRedirect(next)
+
 def entry_like(request, entry):
     '''Like an entry.
 
@@ -165,6 +191,33 @@ def entry_like(request, entry):
         next = next + '?message=liked&entry=%s' % entry
     next = next + '#%s' % entry
     return HttpResponseRedirect(next)
+
+def entry_unhide(request, entry):
+    '''Un-hide an entry.
+
+    Authentication is required.
+
+    entry is the entry id to be un-hidden.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    try:
+        f.unhide_entry(entry)
+    except Exception, e:
+        if e[0] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return HttpResponseRedirect(reverse(str(e)))
+    next = request.GET.get('next', '/')
+    if '?' in next:
+        next = next + '&message=un-hidden&entry=%s' % entry
+    else:
+        next = next + '?message=un-hidden&entry=%s' % entry
+    next = next + '#%s' % entry
+    return HttpResponseRedirect(next)
+
 
 def entry_unlike(request, entry):
     '''Un-like an entry.

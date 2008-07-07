@@ -24,4 +24,6 @@ urlpatterns = patterns('',
     url(r'^e/(?P<entry>[\w-]+)/c/(?P<comment>[\w-]+)/restore/$', 'fftogo.views.comment_restore', name='comment_restore'),
     url(r'^e/(?P<entry>[\w-]+)/like/$', 'fftogo.views.entry_like', name='entry_like'),
     url(r'^e/(?P<entry>[\w-]+)/unlike/$', 'fftogo.views.entry_unlike', name='entry_unlike'),
+    url(r'^e/(?P<entry>[\w-]+)/hide/$', 'fftogo.views.entry_hide', name='entry_hide'),
+    url(r'^e/(?P<entry>[\w-]+)/unhide/$', 'fftogo.views.entry_unhide', name='entry_unhide'),
 )
