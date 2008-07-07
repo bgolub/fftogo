@@ -334,7 +334,7 @@ def home(request):
     entries = entries[:num]
     extra_context = {
         'entries': entries,
-        'next': start + num + len(hidden),
+        'next': start + len(entries) + len(hidden),
         'hidden': hidden,
     }
     if start > 0:
