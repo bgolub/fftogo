@@ -66,25 +66,30 @@ class FriendFeed(object):
         self.auth_key = auth_key
 
     def validate(self):
+        """Validate the credentials."""
         return self._fetch_feed("/api/validate")
 
     def hide_entry(self, entry_id):
+        """Hides the entry with the given ID."""
         return self._fetch_feed("/api/entry/hide", {
             "entry": entry_id,
         })
  
     def unhide_entry(self, entry_id):
+        """Un-hides the entry with the given ID."""
         return self._fetch_feed("/api/entry/hide", {
             "entry": entry_id,
             "unhide": '1',
         })
  
     def delete_entry(self, entry_id):
+        """Deletes the entry with the given ID."""
         return self._fetch_feed("/api/entry/delete", {
             "entry": entry_id,
         })
  
     def undelete_entry(self, entry_id):
+        """Un-deletes the entry with the given ID."""
         return self._fetch_feed("/api/entry/delete", {
             "entry": entry_id,
             "undelete": '1',
