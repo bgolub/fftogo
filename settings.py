@@ -92,8 +92,6 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.request',
 )
 
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 30 * 2
-
 CACHE_TIME = 30
 
 FONT_SIZE = 11
