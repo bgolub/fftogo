@@ -86,9 +86,13 @@
                     {% endifnotequal %}
                 {% endif %}
                 {% if not entry.anonymous %}
-                    {% ifnotequal entry.user.nickname profile.nickname %}
-                        <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
-                    {% endifnotequal %}
+                    {% if not entry.user.nickname %}
+                        {{ entry.user.name }}
+                    {% else %}
+                        {% ifnotequal entry.user.nickname profile.nickname %}
+                            <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
+                        {% endifnotequal %}
+                    {% endif %}
                 {% endif %}
                 posted
                 {% ifequal entry.service.id 'twitter' %}
