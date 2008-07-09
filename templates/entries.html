@@ -113,6 +113,17 @@
                     {% endif %}
                 {% endifequal %}
                 on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
+                {% if request.session.media %}
+                    {% if entry.media %}
+                        <div class="media">
+                            {% for media in entry.media %}
+                                {% for thumbnail in media.thumbnails %}
+                                    <img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title entry.title %}" />
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endif %}
                 <div class="meta">
                     <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
                     {% if entry.via %}

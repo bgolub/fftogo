@@ -98,6 +98,8 @@ FONT_SIZE = 11
 
 GMP = False
 
+MEDIA = False
+
 NEW_WINDOW = False
 
 NUM = 30
