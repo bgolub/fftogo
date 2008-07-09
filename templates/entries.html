@@ -142,7 +142,7 @@
                     {% endif %}
                     {% if entry.likes %}
                         -
-                        Liked by {{ entry.likes|length|apnumber }} {{ entry.likes|length|pluralize:"person,people" }}
+                        {{ entry.likes|length|apnumber|capfirst }} {{ entry.likes|length|pluralize:"person,people" }} liked this
                     {% endif %}
                     {% if entry.comments %}
                         <ul class="comments">
