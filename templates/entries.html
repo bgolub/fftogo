@@ -153,7 +153,7 @@
                     {% endif %}
                     {% if entry.likes %}
                         -
-                        {{ entry.likes|length|apnumber|capfirst }} {{ entry.likes|length|pluralize:"person,people" }} liked this
+                        <span class="likes">{{ entry.likes|length|apnumber|capfirst }} {{ entry.likes|length|pluralize:"person,people" }} liked this</span>
                     {% endif %}
                     {% if entry.comments %}
                         <ul class="comments">
