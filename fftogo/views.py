@@ -49,13 +49,12 @@ def comment_delete(request, entry, comment):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.delete_comment(entry, comment)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.delete_comment(entry, comment)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=deleted&entry=%s&comment=%s' % (entry, comment)
@@ -76,13 +75,12 @@ def comment_undelete(request, entry, comment):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.undelete_comment(entry, comment)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.undelete_comment(entry, comment)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
@@ -109,18 +107,17 @@ def entry_comment(request, entry):
         if form.is_valid():
             f = friendfeed.FriendFeed(request.session['nickname'],
                 request.session['key'])
-            try:
-                if form.data['comment']:
-                    f.edit_comment(form.data['entry'], form.data['comment'], form.data['body'])
-                    comment = form.data['comment']
-                else:
-                    comment = f.add_comment(form.data['entry'], form.data['body'], via=VIA)
-            except Exception, e:
-                if e[0] == 401:
+            if form.data['comment']:
+                data = f.edit_comment(form.data['entry'], form.data['comment'], form.data['body'])
+            else:
+                data = f.add_comment(form.data['entry'], form.data['body'], via=VIA)
+            if 'errorCode' in data:
+                if data['statusCode'] == 401:
                     del request.session['nickname']
                     del request.session['key']
-                return HttpResponseRedirect(reverse(str(e)))
+                return render_to_response('error.html', data, context_instance=RequestContext(request))
             next = form.data['next']
+            comment = data['id']
             if not form.data['comment']:
                 if '?' in next:
                     next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
@@ -152,13 +149,12 @@ def entry_delete(request, entry):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.delete_entry(entry)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.delete_entry(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=deleted&entry=%s' % entry
@@ -178,13 +174,12 @@ def entry_undelete(request, entry):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.undelete_entry(entry)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.undelete_entry(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=shared&entry=%s' % entry
@@ -204,13 +199,12 @@ def entry_hide(request, entry):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.hide_entry(entry)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.hide_entry(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=hidden&entry=%s' % entry
@@ -230,13 +224,12 @@ def entry_like(request, entry):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.add_like(entry)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.add_like(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=liked&entry=%s' % entry
@@ -256,13 +249,12 @@ def entry_unhide(request, entry):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.unhide_entry(entry)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.unhide_entry(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=un-hidden&entry=%s' % entry
@@ -282,13 +274,12 @@ def entry_unlike(request, entry):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        f.delete_like(entry)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.delete_like(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=un-liked&entry=%s' % entry
@@ -312,21 +303,19 @@ def home(request):
         start = 0
     service = request.GET.get('service', None)
     num = int(request.session.get('num', NUM))
-    try:
-        data = f.fetch_home_feed(num=num, start=start, service=service)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.fetch_home_feed(num=num, start=start, service=service)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     new_start = start
     while len(entries) < num and (new_start - start) / num < 3:
         new_start = new_start + num
-        try:
-            data = f.fetch_home_feed(num=num, start=new_start, service=service)
-        except:
+        data = f.fetch_home_feed(num=num, start=new_start, service=service)
+        if 'errorCode' in data:
             break
         more_entries = [entry for entry in data['entries'] if not entry['hidden']]
         more_hidden = [entry for entry in data['entries'] if entry['hidden']]
@@ -356,19 +345,18 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            try:
-                nickname = form.data['nickname'].strip().lower()
-                f = friendfeed.FriendFeed(nickname, form.data['key'])
-                data = f.validate()
-                request.session['nickname'] = nickname
-                request.session['key'] = form.data['key']
-                return HttpResponseRedirect('/?message=settings')
-            except Exception, e:
-                if e[0] == 401:
+            nickname = form.data['nickname'].strip().lower()
+            f = friendfeed.FriendFeed(nickname, form.data['key'])
+            data = f.validate()
+            if 'errorCode' in data:
+                if data['statusCode'] == 401:
                     if 'nickname' in request.session:
                         del request.session['nickname']
                         del request.session['key']
-                return HttpResponseRedirect(reverse(str(e)))
+                return render_to_response('error.html', data, context_instance=RequestContext(request))
+            request.session['nickname'] = nickname
+            request.session['key'] = form.data['key']
+            return HttpResponseRedirect('/?message=settings')
     else:
         form = LoginForm()
     extra_context['form'] = form
@@ -400,13 +388,12 @@ def public(request):
     except:
         data = None
     if not data:
-        try:
-            data = f.fetch_public_feed(num=num, start=start, service=service)
-        except Exception, e:
-            if e[0] == 401:
+        data = f.fetch_public_feed(num=num, start=start, service=service)
+        if 'errorCode' in data:
+            if data['statusCode'] == 401:
                 del request.session['nickname']
                 del request.session['key']
-            return HttpResponseRedirect(reverse(str(e)))
+            return render_to_response('error.html', data, context_instance=RequestContext(request))
         memcache.set(key, data, CACHE_TIME)
     entries = data['entries']
     extra_context = {
@@ -441,20 +428,13 @@ def room(request, nickname):
         start = 0
     service = request.GET.get('service', None)
     num = int(request.session.get('num', NUM))
-    try:
-        data = f.fetch_room_feed(nickname, num=num, start=start,
-            service=service)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.fetch_room_feed(nickname, num=num, start=start, service=service)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
-    try:
-        profile = f.fetch_room_profile(nickname)
-    except Exception, e:
-        profile = {
-            'nickname': nickname,
-        }
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
+    profile = f.fetch_room_profile(nickname)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
@@ -483,13 +463,12 @@ def rooms(request):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        data = f.fetch_user_profile(request.session['nickname'])
-    except Exception, e:
-        if e[0] == 401:
+    data = f.fetch_user_profile(request.session['nickname'])
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     extra_context = {
         'rooms': data['rooms'],
     }
@@ -528,13 +507,12 @@ def search(request):
     service = request.GET.get('service', None)
     num = int(request.session.get('num', NUM))
     search = form.data['search']
-    try:
-        data = f.search(search, num=num, start=start, service=service)
-    except Exception, e:
-        if e[0] == 401:
+    data = f.search(search, num=num, start=start, service=service)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
@@ -594,19 +572,18 @@ def share(request):
         request.session['key'])
     if request.method == 'POST':
         if 'title' in request.POST:
-            try:
-                entry = f.publish_message(request.POST['title'], via=VIA, room=request.POST.get('room', None))
-            except Exception, e:
-                if e[0] == 401:
+            data = f.publish_message(request.POST['title'], via=VIA, room=request.POST.get('room', None))
+            if 'errorCode' in data:
+                if data['statusCode'] == 401:
                     del request.session['nickname']
                     del request.session['key']
-                return HttpResponseRedirect(reverse(str(e)))
+                return render_to_response('error.html', data, context_instance=RequestContext(request))
     next = request.POST.get('next', '/')
     if '?' in next:
-        next = next + '&message=shared&entry=%s' % entry['id']
+        next = next + '&message=shared&entry=%s' % data['entries'][0]['id']
     else:
-        next = next + '?message=shared&entry=%s' % entry['id']
-    next += '#%s' % entry['id'] 
+        next = next + '?message=shared&entry=%s' % data['entries'][0]['id']
+    next += '#%s' % data['entries'][0]['id']
     return HttpResponseRedirect(next)
 
 def user(request, nickname, type=None):
@@ -628,25 +605,24 @@ def user(request, nickname, type=None):
         start = 0
     service = request.GET.get('service', None)
     num = int(request.session.get('num', NUM))
-    try:
-        if type == 'comments':
-            data = f.fetch_user_comments_feed(nickname, num=num, start=start,
-                service=service)
-        elif type == 'likes':
-            data = f.fetch_user_likes_feed(nickname, num=num, start=start,
-                service=service)
-        elif type == 'discussion':
-            data = f.fetch_user_discussion_feed(nickname, num=num, start=start,
-                service=service)
-        else:
-            data = f.fetch_user_feed(nickname, num=num, start=start,
-                service=service)
-        profile = f.fetch_user_profile(nickname)
-    except Exception, e:
-        if e[0] == 401:
+    if type == 'comments':
+        data = f.fetch_user_comments_feed(nickname, num=num, start=start,
+            service=service)
+    elif type == 'likes':
+        data = f.fetch_user_likes_feed(nickname, num=num, start=start,
+            service=service)
+    elif type == 'discussion':
+        data = f.fetch_user_discussion_feed(nickname, num=num, start=start,
+            service=service)
+    else:
+        data = f.fetch_user_feed(nickname, num=num, start=start,
+            service=service)
+    profile = f.fetch_user_profile(nickname)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
-        return HttpResponseRedirect(reverse(str(e)))
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {

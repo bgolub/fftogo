@@ -67,50 +67,50 @@ class FriendFeed(object):
 
     def validate(self):
         """Validate the credentials."""
-        return self._fetch_feed("/api/validate")
+        return self._fetch("/api/validate", None)
 
     def hide_entry(self, entry_id):
         """Hides the entry with the given ID."""
-        return self._fetch_feed("/api/entry/hide", {
+        return self._fetch("/api/entry/hide", {
             "entry": entry_id,
         })
  
     def unhide_entry(self, entry_id):
         """Un-hides the entry with the given ID."""
-        return self._fetch_feed("/api/entry/hide", {
+        return self._fetch("/api/entry/hide", {
             "entry": entry_id,
             "unhide": '1',
         })
  
     def delete_entry(self, entry_id):
         """Deletes the entry with the given ID."""
-        return self._fetch_feed("/api/entry/delete", {
+        return self._fetch("/api/entry/delete", {
             "entry": entry_id,
         })
  
     def undelete_entry(self, entry_id):
         """Un-deletes the entry with the given ID."""
-        return self._fetch_feed("/api/entry/delete", {
+        return self._fetch("/api/entry/delete", {
             "entry": entry_id,
             "undelete": '1',
         })
 
-    def fetch_user_profile(self, nickname, **kwargs):
+    def fetch_user_profile(self, nickname):
         """Returns a users profile for the given nickname.
 
         Authentication is required for private users.
         """
-        return self._fetch_feed(
-            "/api/user/" + urllib.quote_plus(nickname) + "/profile", **kwargs)
+        return self._fetch(
+            "/api/user/" + urllib.quote_plus(nickname) + "/profile", None)
 
-    def fetch_room_profile(self, nickname, **kwargs):
+    def fetch_room_profile(self, nickname):
         """Returns a rooms profile for the given nickname.
 
         Authentication *should* be required for private rooms but will always
         401 at the moment.
         """
-        return self._fetch_feed(
-            "/api/room/" + urllib.quote_plus(nickname) + "/profile", **kwargs)
+        return self._fetch(
+            "/api/room/" + urllib.quote_plus(nickname) + "/profile", None)
 
     def fetch_room_feed(self, nickname, **kwargs):
         """Returns a rooms feed with the given room nickname
@@ -249,8 +249,7 @@ class FriendFeed(object):
                 post_args["audio%d_title" % i] = clip["title"]
         if room:
             post_args["room"] = room
-        feed = self._fetch_feed("/api/share", post_args=post_args)
-        return feed["entries"][0]
+        return self._fetch_feed("/api/share", post_args=post_args)
 
     def add_comment(self, entry_id, body, via=None):
         """Adds the given comment to the entry with the given ID.
@@ -263,12 +262,11 @@ class FriendFeed(object):
             "body": body
         }
         if via: args["via"] = via
-        result = self._fetch("/api/comment", args)
-        return result["id"]
+        return self._fetch("/api/comment", args)
 
     def edit_comment(self, entry_id, comment_id, body):
         """Updates the comment with the given ID."""
-        self._fetch("/api/comment", {
+        return self._fetch("/api/comment", {
             "entry": entry_id,
             "comment": comment_id,
             "body": body
@@ -276,14 +274,14 @@ class FriendFeed(object):
 
     def delete_comment(self, entry_id, comment_id):
         """Deletes the comment with the given ID."""
-        self._fetch("/api/comment/delete", {
+        return self._fetch("/api/comment/delete", {
             "entry": entry_id,
             "comment": comment_id,
         })
 
     def undelete_comment(self, entry_id, comment_id):
         """Un-deletes the comment with the given ID."""
-        self._fetch("/api/comment/delete", {
+        return self._fetch("/api/comment/delete", {
             "entry": entry_id,
             "comment": comment_id,
             "undelete": 1,
@@ -291,13 +289,13 @@ class FriendFeed(object):
 
     def add_like(self, entry_id):
         """'Likes' the entry with the given ID."""
-        self._fetch("/api/like", {
+        return self._fetch("/api/like", {
             "entry": entry_id,
         })
 
     def delete_like(self, entry_id):
         """Deletes the 'Like' for the entry with the given ID (if any)."""
-        self._fetch("/api/like/delete", {
+        return self._fetch("/api/like/delete", {
             "entry": entry_id,
         })
 
@@ -338,11 +336,9 @@ class FriendFeed(object):
             headers["Authorization"] = "Basic %s" % token
         result = urlfetch.fetch(url, payload=payload, method=method,
             headers=headers)
-        # urllib2 will raise an Exception when you get any error code but
-        # urlfetch does not; raise our own (TODO: make an Exception class)
-        if result.status_code != 200:
-            raise Exception, result.status_code
-        return parse_json(result.content)
+        data = parse_json(result.content)
+        data['statusCode'] = result.status_code
+        return data
 
     def _parse_date(self, date_str):
         rfc3339_date = "%Y-%m-%dT%H:%M:%SZ"
