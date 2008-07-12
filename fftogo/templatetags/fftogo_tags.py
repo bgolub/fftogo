@@ -7,6 +7,44 @@ register = template.Library()
 def can_edit(value):
     key = 'comment_%s' % value['id']
     return memcache.get(key)
+
+@register.filter
+def find_verb(value):
+    services = {
+        'amazon': 'added',
+        'brightkite': 'checked in',
+        'delicious': 'bookmarked',
+        'digg': 'dugg',
+        'diigo': 'bookmarked',
+        'disqus': 'commented',
+        'flickr': 'published/favorited',
+        'goodreads': 'read',
+        'googletalk': 'had a new status message',
+        'googlereader': 'shared',
+        'googleshared': 'shared',
+        'intensedebate': 'commented',
+        'lastfm': 'loved',
+        'librarything': 'added',
+        'linkedin': 'updated their job title',
+        'magnolia': 'bookmarked',
+        'misterwong': 'bookmarked',
+        'mixx': 'submitted',
+        'netflix': 'added',
+        'netvibes': 'starred',
+        'pandora': 'bookmarked',
+        'picasa': 'published',
+        'polyvore': 'created',
+        'reddit': 'liked',
+        'smugmug': 'published',
+        'stumbleupon': 'stumbled upon',
+        'tipjoy': 'tipped',
+        'upcoming': 'added',
+        'vimeo': 'published/liked',
+        'yelp': 'reviewed',
+        'youtube': 'published/favorited',
+        'zooomr': 'published',
+    }
+    return services.get(value['service']['id'], 'posted')
  
 @register.filter
 def gmpize(value, arg=None):

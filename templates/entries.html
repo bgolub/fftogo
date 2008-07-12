@@ -94,7 +94,7 @@
                         {% endifnotequal %}
                     {% endif %}
                 {% endif %}
-                posted
+                {{ entry|find_verb }}
                 {% ifequal entry.service.id 'twitter' %}
                     {% if request.session.googlemobileproxy %}
                         "{{ entry.title|urlizetrunc:30|twitterize|gmpize|safe }}"
