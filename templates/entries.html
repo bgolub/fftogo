@@ -152,8 +152,17 @@
                         {% endifequal %}
                     {% endif %}
                     {% if entry.likes %}
-                        -
-                        <span class="likes">{{ entry.likes|length|apnumber|capfirst }} {{ entry.likes|length|pluralize:"person,people" }} liked this</span>
+                        <div class="likes">
+                            {% for like in entry.likes %}
+                                {% if forloop.last %}
+                                    {% if not forloop.first %}
+                                        and
+                                    {% endif %}
+                                {% endif %}
+                                <a href="{% url user like.user.nickname %}">{% ifequal like.user.nickname request.session.nickname %}You{% else %}{{ like.user.name }}{% endifequal %}</a>
+                            {% endfor %}
+                            liked this
+                        </div>
                     {% endif %}
                     {% if entry.comments %}
                         <ul class="comments">
