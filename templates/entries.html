@@ -149,6 +149,13 @@
                         {% ifequal entry.user.nickname request.session.nickname %}
                             -
                             <a href="{% url entry_delete entry.id %}?next={{ request.path }}">Delete</a>
+                        {% else %}
+                            {% if room %}
+                                {% if request.session.nickname|is_admin:profile %}
+                                    -
+                                    <a href="{% url entry_delete entry.id %}?next={{ request.path }}">Delete</a>
+                                {% endif %}
+                            {% endif %}
                         {% endifequal %}
                     {% endif %}
                     {% if entry.likes %}
