@@ -617,7 +617,12 @@ def user(request, nickname, type=None):
     else:
         data = f.fetch_user_feed(nickname, num=num, start=start,
             service=service)
-    profile = f.fetch_user_profile(nickname)
+    try:
+        profile = f.fetch_user_profile(nickname)
+    except:
+        profile = {
+            'name': data['entries'][0]['user']['name'],
+        }
     if 'errorCode' in data:
         if data['statusCode'] == 401:
             del request.session['nickname']

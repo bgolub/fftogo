@@ -10,37 +10,41 @@
 
 {% block below_share %}
     <div class="profile">
-        <img class="picture" src="http://friendfeed.com/{{ profile.nickname }}/picture?size=medium" alt="{{ profile.name }}" />
+        {% if profile.nickname %}
+            <img class="picture" src="http://friendfeed.com/{{ profile.nickname }}/picture?size=medium" alt="{{ profile.name }}" />
+        {% endif %}
         <strong>{{ profile.name }}</strong>
         <div class="section">
             {% for service in profile.services %}
                 <a class="service" href="{{ request.path }}?service={{ service.id }}"><img src="{{ service.iconUrl }}" alt="{{ service.name }}" /></a>
             {% endfor %}
         </div>
-        <div class="section">
-            {% if not type %}
-                Feed
-            {% else %}
-                <a href="{% url user profile.nickname %}">Feed</a>
-            {% endif %}
-            -
-            {% ifequal type 'comments' %}
-                Comments
-            {% else %}
-                <a href="{% url user_type profile.nickname,"comments" %}">Comments</a>
-            {% endifequal %}
-            -
-            {% ifequal type 'likes' %}
-                Likes
-            {% else %}
-                <a href="{% url user_type profile.nickname,"likes" %}">Likes</a>
-            {% endifequal %}
-            -
-            {% ifequal type 'discussion' %}
-                Both
-            {% else %}
-                <a href="{% url user_type profile.nickname,"discussion" %}">Both</a>
-            {% endifequal %}
-        </div>
+        {% if profile.nickname %}
+            <div class="section">
+                {% if not type %}
+                    Feed
+                {% else %}
+                    <a href="{% url user profile.nickname %}">Feed</a>
+                {% endif %}
+                -
+                {% ifequal type 'comments' %}
+                    Comments
+                {% else %}
+                    <a href="{% url user_type profile.nickname,"comments" %}">Comments</a>
+                {% endifequal %}
+                -
+                {% ifequal type 'likes' %}
+                    Likes
+                {% else %}
+                    <a href="{% url user_type profile.nickname,"likes" %}">Likes</a>
+                {% endifequal %}
+                -
+                {% ifequal type 'discussion' %}
+                    Both
+                {% else %}
+                    <a href="{% url user_type profile.nickname,"discussion" %}">Both</a>
+                {% endifequal %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

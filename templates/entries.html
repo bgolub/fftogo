@@ -87,7 +87,7 @@
                 {% endif %}
                 {% if not entry.anonymous %}
                     {% if not entry.user.nickname %}
-                        {{ entry.user.name }}
+                        <a href="{% url user entry.user.id %}">{{ entry.user.name }}</a>
                     {% else %}
                         {% ifnotequal entry.user.nickname profile.nickname %}
                             <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
