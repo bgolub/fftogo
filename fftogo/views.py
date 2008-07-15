@@ -108,8 +108,9 @@ def entry(request, entry):
     extra_context = {
         'entries': data['entries'],
         'permalink': True,
+        'title': data['entries'][0]['title'],
     }
-    return render_to_response('user.html', extra_context, context_instance=RequestContext(request))
+    return render_to_response('entry.html', extra_context, context_instance=RequestContext(request))
 
 def entry_comment(request, entry):
     '''Comment on an entry.
