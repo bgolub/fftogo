@@ -4,9 +4,12 @@ from google.appengine.api import memcache
 register = template.Library()
 
 @register.filter
-def can_edit(value):
-    key = 'comment_%s' % value['id']
-    return memcache.get(key)
+def filter_media(value):
+    return value[:3]
+
+@register.filter
+def filter_thumbnails(value):
+    return value[:1]
 
 @register.filter
 def find_verb(value):

@@ -123,10 +123,12 @@
                 {% if request.session.media %}
                     {% if entry.media %}
                         <div class="media">
-                            {% for media in entry.media %}
-                                {% for thumbnail in media.thumbnails %}
-                                    <img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title entry.title %}" />
-                                {% endfor %}
+                            {% for media in entry.media|filter_media %}
+                                {% if media.thumbnails %}
+                                    {% for thumbnail in media.thumbnails|filter_thumbnails %}
+                                        <img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title entry.title %}" />
+                                    {% endfor %}
+                                {% endif %}
                             {% endfor %}
                         </div>
                     {% endif %}
