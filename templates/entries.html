@@ -94,6 +94,9 @@
                         {% endifnotequal %}
                     {% endif %}
                 {% endif %}
+                {% if entry.friendof %}
+                    (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
+                {% endif %}
                 {{ entry|find_verb }}
                 {% ifequal entry.service.id 'twitter' %}
                     {% if request.session.googlemobileproxy %}
