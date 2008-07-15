@@ -82,6 +82,18 @@ def liked(value, arg):
     return value in [like['user']['nickname'] for like in arg['likes']]
 
 @register.filter
+def shorten_comments(value, arg):
+    if len(value) > 4 and len(arg) > 1:
+        return value[:2] + [{'permalink': True, 'num': len(value) - 5},] + value[-3:]
+    return value
+
+@register.filter
+def shorten_likes(value, arg):
+    if len(value) > 4 and len(arg) > 1:
+        return value[:4] + [{'permalink': True, 'num': len(value) - 4},]
+    return value
+
+@register.filter
 def twitterize(value):
     import re
     for user in re.findall(r'@(\w+)', value):

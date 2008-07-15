@@ -95,6 +95,10 @@ class FriendFeed(object):
             "undelete": '1',
         })
 
+    def fetch_entry(self, entry_id):
+        return self._fetch_feed(
+            "/api/feed/entry/" + urllib.quote_plus(entry_id))
+
     def fetch_user_profile(self, nickname):
         """Returns a users profile for the given nickname.
 

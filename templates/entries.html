@@ -94,9 +94,13 @@
                         {% endifnotequal %}
                     {% endif %}
                 {% endif %}
-                {% if entry.friendof %}
-                    (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
-                {% endif %}
+                {% ifnotequal entry.user.nickname profile.nickname %}
+                    {% if not permalink %}
+                        {% if entry.friendof %}
+                            (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
+                        {% endif %}
+                    {% endif %}
+                {% endifnotequal %}
                 {{ entry|find_verb }}
                 {% ifequal entry.service.id 'twitter' %}
                     {% if request.session.googlemobileproxy %}
@@ -163,49 +167,59 @@
                     {% endif %}
                     {% if entry.likes %}
                         <div class="likes">
-                            {% for like in entry.likes %}
+                            {% for like in entry.likes|shorten_likes:entries %}
                                 {% if forloop.last %}
                                     {% if not forloop.first %}
                                         and
                                     {% endif %}
                                 {% endif %}
-                                <a href="{% url user like.user.nickname %}">{% ifequal like.user.nickname request.session.nickname %}You{% else %}{{ like.user.name }}{% endifequal %}</a>
+                                {% if like.permalink %}
+                                    <a href="{% url entry entry.id %}">{{ like.num|apnumber }} other {{ like.num|pluralize:"person,people" }}</a>
+                                {% else %}
+                                    <a href="{% url user like.user.nickname %}">{% ifequal like.user.nickname request.session.nickname %}You{% else %}{{ like.user.name }}{% endifequal %}</a>
+                                {% endif %}
                             {% endfor %}
                             liked this
                         </div>
                     {% endif %}
                     {% if entry.comments %}
                         <ul class="comments">
-                            {% for comment in entry.comments %}
-                                <li id="{{ comment.id }}" class="comment">
-                                    {% if request.session.googlemobileproxy %}
-                                        {{ comment.body|urlizetrunc:30|gmpize|safe }}
-                                    {% else %}
-                                        {{ comment.body|urlizetrunc:30 }}
-                                    {% endif %}
-                                    -
-                                    <a href="{% url user comment.user.nickname %}">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
-                                    -
-                                    <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
-                                    {% if comment.via %}
-                                        via <a class="via" href="{{ comment.via.url }}">{{ comment.via.name }}</a>
-                                    {% endif %}
-                                    {% ifequal request.session.nickname comment.user.nickname %}
-                                        (<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&body={{ comment.body|urlencode }}&next={{ request.path }}">edit</a>
-                                        |
-                                        <a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
-                                    {% else %}
-                                        {% ifequal request.session.nickname entry.user.nickname %}
-                                            (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                            {% for comment in entry.comments|shorten_comments:entries %}
+                                {% if comment.permalink %}
+                                    <li class="permalink">
+                                        <a href="{% url entry entry.id %}">Show {{ comment.num|apnumber }} more comment{{ comment.num|pluralize }}</a>
+                                    </li>
+                                {% else %}
+                                    <li id="{{ comment.id }}" class="comment">
+                                        {% if request.session.googlemobileproxy %}
+                                            {{ comment.body|urlizetrunc:30|gmpize|safe }}
                                         {% else %}
-                                            {% if room %}
-                                                {% if request.session.nickname|is_admin:profile %}
-                                                    (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                            {{ comment.body|urlizetrunc:30 }}
+                                        {% endif %}
+                                        -
+                                        <a href="{% url user comment.user.nickname %}">{% ifequal comment.user.nickname request.session.nickname %}You{% else %}{{ comment.user.name }}{% endifequal %}</a>
+                                        -
+                                        <span title="{{ comment.date }}">{{ comment.date|timesince }} ago</span>
+                                        {% if comment.via %}
+                                            via <a class="via" href="{{ comment.via.url }}">{{ comment.via.name }}</a>
+                                        {% endif %}
+                                        {% ifequal request.session.nickname comment.user.nickname %}
+                                            (<a href="{% url entry_comment entry.id %}?comment={{ comment.id }}&body={{ comment.body|urlencode }}&next={{ request.path }}">edit</a>
+                                            |
+                                            <a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                        {% else %}
+                                            {% ifequal request.session.nickname entry.user.nickname %}
+                                                (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                            {% else %}
+                                                {% if room %}
+                                                    {% if request.session.nickname|is_admin:profile %}
+                                                        (<a href="{% url comment_delete entry.id,comment.id %}?next={{ request.path }}">delete</a>)
+                                                    {% endif %}
                                                 {% endif %}
-                                            {% endif %}
+                                            {% endifequal %}
                                         {% endifequal %}
-                                    {% endifequal %}
-                                </li>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
                     {% endif %}
@@ -224,14 +238,16 @@
 {% endblock %}
 
 {% block below_content %}
-    <div id="nav">
-        {% if has_previous %}
-            7
-            <a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="7">Previous</a>
-        {% endif %}
-        9
-        <a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="9">Next</a>
-        *
-        <a href="#top" accesskey="*">Top</a>
-    </div>
+    {%if not permalink %}
+        <div id="nav">
+            {% if has_previous %}
+                7
+                <a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="7">Previous</a>
+            {% endif %}
+            9
+            <a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="9">Next</a>
+            *
+            <a href="#top" accesskey="*">Top</a>
+        </div>
+    {% endif %}
 {% endblock %}

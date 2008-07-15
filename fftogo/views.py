@@ -89,6 +89,28 @@ def comment_undelete(request, entry, comment):
     next = next + '#%s' % comment
     return HttpResponseRedirect(next)
 
+def entry(request, entry):
+    '''View a single entry.
+    
+    entry is the entry id.
+    '''
+    if request.session.get('nickname', None):
+        f = friendfeed.FriendFeed(request.session['nickname'],
+            request.session['key'])
+    else:
+        f = friendfeed.FriendFeed()
+    data = f.fetch_entry(entry)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
+    extra_context = {
+        'entries': data['entries'],
+        'permalink': True,
+    }
+    return render_to_response('user.html', extra_context, context_instance=RequestContext(request))
+
 def entry_comment(request, entry):
     '''Comment on an entry.
 
