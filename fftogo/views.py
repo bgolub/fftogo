@@ -469,16 +469,13 @@ def room(request, nickname):
     }
     if start > 0:
         extra_context['has_previous'] = True
-        previous = start - num
-        if previous < 0:
-            previous = 0
-        extra_context['previous'] = previous
+        extra_context['previous'] = max(start - num, 0)
     if request.GET.get('output', 'html') == 'atom':
         return atom(entries)
     return render_to_response('room.html', extra_context, context_instance=RequestContext(request))
 
 def rooms(request):
-    '''Display a list of the authenticated users rooms.
+    '''Display the authenticated users rooms page or a list of the users rooms
 
     Authentication is required.
     '''
@@ -486,16 +483,39 @@ def rooms(request):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    data = f.fetch_user_profile(request.session['nickname'])
+    if 'list' in request.GET:
+        data = f.fetch_user_profile(request.session['nickname'])
+        if not 'errorCode' in data:
+            extra_context = {
+                'rooms': data['rooms'],
+            }
+            template = 'rooms_list.html'
+    else:
+        try:
+            start = max(int(request.GET.get('start', 0)), 0)
+        except ValueError:
+            start = 0
+        service = request.GET.get('service', None)
+        num = int(request.session.get('num', NUM))
+        data = f.fetch_rooms_feed(num=num, start=start, service=service)
+        if not 'errorCode' in data:
+            entries = [entry for entry in data['entries'] if not entry['hidden']]
+            hidden = [entry for entry in data['entries'] if entry['hidden']]
+            extra_context = {
+                'entries': entries,
+                'hidden': hidden,
+                'next': start + num,
+            }
+            if start > 0:   
+                extra_context['has_previous'] = True
+                extra_context['previous'] = max(start - num, 0)
+            template = 'rooms.html'
     if 'errorCode' in data:
         if data['statusCode'] == 401:
             del request.session['nickname']
             del request.session['key']
         return render_to_response('error.html', data, context_instance=RequestContext(request))
-    extra_context = {
-        'rooms': data['rooms'],
-    }
-    return render_to_response('rooms.html', extra_context, context_instance=RequestContext(request))
+    return render_to_response(template, extra_context, context_instance=RequestContext(request))
 
 def search(request):
     '''Render a search feed.

@@ -1,17 +1,9 @@
-{% extends "base.html" %}
-
-{% load humanize %}
+{% extends "entries.html" %}
 
 {% block title %}
     Rooms
 {% endblock %}
 
-{% block content %}
-    <ul class="rooms">
-        {% for room in rooms %}
-            <li class="room">
-                <a href="{% url room room.nickname %}">{{ room.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+{% block below_share %}
+    <a href="{% url rooms %}?list=1">List Rooms</a>
 {% endblock %}

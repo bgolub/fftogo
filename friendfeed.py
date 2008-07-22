@@ -124,6 +124,13 @@ class FriendFeed(object):
         return self._fetch_feed(
             "/api/feed/room/" + urllib.quote_plus(nickname), **kwargs)
 
+    def fetch_rooms_feed(self, **kwargs):
+        """Returns the entries the authenticated user sees on their rooms page.
+
+        Authentication is required.
+        """
+        return self._fetch_feed("/api/feed/rooms", **kwargs)
+
     def fetch_public_feed(self, **kwargs):
         """Returns the public feed with everyone's public entries.
 

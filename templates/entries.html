@@ -58,6 +58,8 @@
             {% endifequal %}
         </div>
     {% endif %}
+    {% block above_share %}
+    {% endblock %}
     {% block share %}
         {% if request.session.nickname %}
             <form method="post" action="/share/">
