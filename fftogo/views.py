@@ -321,7 +321,7 @@ def home(request):
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     try:
-        start = int(request.GET.get('start', 0))
+        start = max(int(request.GET.get('start', 0)), 0)
     except:
         start = 0
     service = request.GET.get('service', None)
@@ -352,10 +352,7 @@ def home(request):
     }
     if start > 0:
         extra_context['has_previous'] = True
-        previous = start - num
-        if previous < 0:
-            previous = 0
-        extra_context['previous'] = previous
+        extra_context['previous'] = max(start - num, 0)
     if request.GET.get('output', 'html') == 'atom':
         return atom(entries)
     return render_to_response('home.html', extra_context, context_instance=RequestContext(request))
@@ -400,7 +397,7 @@ def public(request):
     '''
     f = friendfeed.FriendFeed()
     try:
-        start = int(request.GET.get('start', 0))
+        start = max(int(request.GET.get('start', 0)), 0)
     except:
         start = 0
     service = request.GET.get('service', None)
@@ -425,10 +422,7 @@ def public(request):
     }
     if start > 0:
         extra_context['has_previous'] = True
-        previous = start - num
-        if previous < 0:
-            previous = 0
-        extra_context['previous'] = previous
+        extra_context['previous'] = max(start - num, 0)
     if request.GET.get('output', 'html') == 'atom':
         return atom(entries)
     return render_to_response('public.html', extra_context, context_instance=RequestContext(request))
@@ -446,7 +440,7 @@ def room(request, nickname):
     else:
         f = friendfeed.FriendFeed()
     try:
-        start = int(request.GET.get('start', 0))
+        start = max(int(request.GET.get('start', 0)), 0)
     except:
         start = 0
     service = request.GET.get('service', None)
@@ -544,7 +538,7 @@ def search(request):
     else:
         f = friendfeed.FriendFeed()
     try:
-        start = int(request.GET.get('start', 0))
+        start = max(int(request.GET.get('start', 0)), 0)
     except:
         start = 0
     service = request.GET.get('service', None)
@@ -567,10 +561,7 @@ def search(request):
     }
     if start > 0:
         extra_context['has_previous'] = True
-        previous = start - num
-        if previous < 0:
-            previous = 0
-        extra_context['previous'] = previous
+        extra_context['previous'] = max(start - num, 0)
     if request.GET.get('output', 'html') == 'atom':
         return atom(entries)
     return render_to_response('search.html', extra_context, context_instance=RequestContext(request))
@@ -643,7 +634,7 @@ def user(request, nickname, type=None):
     else:
         f = friendfeed.FriendFeed()
     try:
-        start = int(request.GET.get('start', 0))
+        start = max(int(request.GET.get('start', 0)), 0)
     except:
         start = 0
     service = request.GET.get('service', None)
@@ -682,10 +673,7 @@ def user(request, nickname, type=None):
     }
     if start > 0:
         extra_context['has_previous'] = True
-        previous = start - num
-        if previous < 0:
-            previous = 0
-        extra_context['previous'] = previous
+        extra_context['previous'] = max(start - num, 0)
     if request.GET.get('output', 'html') == 'atom':
         return atom(entries)
     return render_to_response('user.html', extra_context, context_instance=RequestContext(request))
