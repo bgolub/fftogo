@@ -68,7 +68,7 @@
                     <input type="hidden" name="room" value="{{ room }}" />
                 {% endif %}
                 <input name="title" />
-                <input type="submit" value="Share" />
+                <input type="submit" value="{% block share_button_value %}Share{% endblock %}" />
             </form>
         {% endif %}
     {% endblock %}
