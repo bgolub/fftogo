@@ -1,4 +1,4 @@
-from django import newforms as forms
+from django import forms
 
 class IntegerWidget(forms.TextInput):
     def __init__(self, *args, **kwargs):

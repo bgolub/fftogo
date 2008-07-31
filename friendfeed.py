@@ -40,6 +40,7 @@ import time
 import urllib
 # Google App Engine does not allow urllib2; we use urlfetch instead
 from google.appengine.api import urlfetch
+from django.conf import settings
 
 # We require a JSON parsing library. These seem to be the most popular.
 try:
@@ -329,6 +330,7 @@ class FriendFeed(object):
         # Use Django's urlencode because it is unicode safe
         from django.utils.http import urlencode
         url_args["format"] = "json"
+        url_args["apikey"] = settings.APIKEY 
         args = urlencode(url_args)
         url = "http://friendfeed.com" + uri + "?" + args
         headers = {}
