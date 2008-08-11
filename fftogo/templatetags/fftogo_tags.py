@@ -68,7 +68,13 @@ def is_admin(value, arg):
 
 @register.filter
 def is_message(value):
-    if value['service']['id'] == 'googletalk':
+    services = (
+        'googletalk',
+        'identica',
+        'plurk',
+        'twitter',
+    )
+    if value['service']['id'] in services:
         return True 
     if value['service']['id'] == 'jaiku':
         return value['service']['profileUrl'].lower() in value['link'].lower()
