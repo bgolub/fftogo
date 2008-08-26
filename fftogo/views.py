@@ -37,6 +37,12 @@ def atom(entries):
         )
     return HttpResponse(f.writeString('utf-8'))
 
+def error(request, data):
+    if data['statusCode'] == 401:
+        del request.session['nickname']
+        del request.session['key']
+    return render_to_response('error.html', data, context_instance=RequestContext(request))
+
 def comment_delete(request, entry, comment):
     '''Delete a comment.
 
@@ -51,10 +57,7 @@ def comment_delete(request, entry, comment):
         request.session['key'])
     data = f.delete_comment(entry, comment)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=deleted&entry=%s&comment=%s' % (entry, comment)
@@ -77,10 +80,7 @@ def comment_undelete(request, entry, comment):
         request.session['key'])
     data = f.undelete_comment(entry, comment)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
@@ -101,10 +101,7 @@ def entry(request, entry):
         f = friendfeed.FriendFeed()
     data = f.fetch_entry(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     extra_context = {
         'entries': data['entries'],
         'permalink': True,
@@ -135,10 +132,7 @@ def entry_comment(request, entry):
             else:
                 data = f.add_comment(form.data['entry'], form.data['body'], via=VIA)
             if 'errorCode' in data:
-                if data['statusCode'] == 401:
-                    del request.session['nickname']
-                    del request.session['key']
-                return render_to_response('error.html', data, context_instance=RequestContext(request))
+                return error(request, data)
             next = form.data['next']
             comment = data['id']
             if not form.data['comment']:
@@ -174,10 +168,7 @@ def entry_delete(request, entry):
         request.session['key'])
     data = f.delete_entry(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=deleted&entry=%s' % entry
@@ -199,10 +190,7 @@ def entry_undelete(request, entry):
         request.session['key'])
     data = f.undelete_entry(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=shared&entry=%s' % entry
@@ -224,10 +212,7 @@ def entry_hide(request, entry):
         request.session['key'])
     data = f.hide_entry(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=hidden&entry=%s' % entry
@@ -249,10 +234,7 @@ def entry_like(request, entry):
         request.session['key'])
     data = f.add_like(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=liked&entry=%s' % entry
@@ -274,10 +256,7 @@ def entry_unhide(request, entry):
         request.session['key'])
     data = f.unhide_entry(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=un-hidden&entry=%s' % entry
@@ -299,10 +278,7 @@ def entry_unlike(request, entry):
         request.session['key'])
     data = f.delete_like(entry)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     next = request.GET.get('next', '/')
     if '?' in next:
         next = next + '&message=un-liked&entry=%s' % entry
@@ -328,10 +304,7 @@ def home(request):
     num = int(request.session.get('num', NUM))
     data = f.fetch_home_feed(num=num, start=start, service=service)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     new_start = start
@@ -369,11 +342,7 @@ def login(request):
             f = friendfeed.FriendFeed(nickname, form.data['key'])
             data = f.validate()
             if 'errorCode' in data:
-                if data['statusCode'] == 401:
-                    if 'nickname' in request.session:
-                        del request.session['nickname']
-                        del request.session['key']
-                return render_to_response('error.html', data, context_instance=RequestContext(request))
+                return error(request, data)
             request.session['nickname'] = nickname
             request.session['key'] = form.data['key']
             return HttpResponseRedirect('/?message=settings')
@@ -410,10 +379,7 @@ def public(request):
     if not data:
         data = f.fetch_public_feed(num=num, start=start, service=service)
         if 'errorCode' in data:
-            if data['statusCode'] == 401:
-                del request.session['nickname']
-                del request.session['key']
-            return render_to_response('error.html', data, context_instance=RequestContext(request))
+            return error(request, data)
         memcache.set(key, data, CACHE_TIME)
     entries = data['entries']
     extra_context = {
@@ -447,10 +413,7 @@ def room(request, nickname):
     num = int(request.session.get('num', NUM))
     data = f.fetch_room_feed(nickname, num=num, start=start, service=service)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     profile = f.fetch_room_profile(nickname)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
@@ -485,10 +448,7 @@ def list(request, nickname):
     num = int(request.session.get('num', NUM))
     data = f.fetch_list_feed(nickname, num=num, start=start, service=service)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     profile = f.fetch_list_profile(nickname)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
@@ -517,10 +477,7 @@ def lists(request):
         request.session['key'])
     data = f.fetch_user_profile(request.session['nickname'])
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     extra_context = {
         'lists': data['lists'],
     }
@@ -563,10 +520,7 @@ def rooms(request):
                 extra_context['previous'] = max(start - num, 0)
             template = 'rooms.html'
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     return render_to_response(template, extra_context, context_instance=RequestContext(request))
 
 def search(request):
@@ -604,10 +558,7 @@ def search(request):
     search = form.data['search']
     data = f.search(search, num=num, start=start, service=service)
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
@@ -666,10 +617,7 @@ def share(request):
         if 'title' in request.POST:
             data = f.publish_message(request.POST['title'], via=VIA, room=request.POST.get('room', None))
             if 'errorCode' in data:
-                if data['statusCode'] == 401:
-                    del request.session['nickname']
-                    del request.session['key']
-                return render_to_response('error.html', data, context_instance=RequestContext(request))
+                return error(request, data)
     next = request.POST.get('next', '/')
     if '?' in next:
         next = next + '&message=shared&entry=%s' % data['entries'][0]['id']
@@ -716,10 +664,7 @@ def user(request, nickname, type=None):
             'name': data['entries'][0]['user']['name'],
         }
     if 'errorCode' in data:
-        if data['statusCode'] == 401:
-            del request.session['nickname']
-            del request.session['key']
-        return render_to_response('error.html', data, context_instance=RequestContext(request))
+        return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
     hidden = [entry for entry in data['entries'] if entry['hidden']]
     extra_context = {
