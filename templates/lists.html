@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}
+    Lists
+{% endblock %}
+
+{% block content %}
+    <ul class="lists">
+        {% for list in lists %}
+            <li class="list">
+                <a href="{% url list list.nickname %}">{{ list.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

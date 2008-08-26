@@ -106,7 +106,24 @@ class FriendFeed(object):
         Authentication is required for private users.
         """
         return self._fetch(
-            "/api/user/" + urllib.quote_plus(nickname) + "/profile", None)
+            "/api/user/" + urllib.quote_plus(nickname) + "/profile", None, beta=1)
+
+    def fetch_list_profile(self, nickname):
+        """Returns a lists profile for the given nickname.
+
+        Authentication is required.
+        """
+        return self._fetch(
+            "/api/list/" + urllib.quote_plus(nickname) + "/profile", None, beta=1)
+
+    def fetch_list_feed(self, nickname, **kwargs):
+        """Returns a list feed for the given nickname.
+
+        Authentication is required.
+        """
+        kwargs["beta"] = 1
+        return self._fetch_feed(
+            "/api/feed/list/" + urllib.quote_plus(nickname), **kwargs)
 
     def fetch_room_profile(self, nickname):
         """Returns a rooms profile for the given nickname.
@@ -179,6 +196,7 @@ class FriendFeed(object):
 
         Authentication is always required.
         """
+        kwargs["beta"] = 1
         return self._fetch_feed("/api/feed/home", **kwargs)
 
     def search(self, q, **kwargs):
@@ -331,8 +349,13 @@ class FriendFeed(object):
         from django.utils.http import urlencode
         url_args["format"] = "json"
         url_args["apikey"] = settings.APIKEY 
+        if "beta" in url_args:
+            url = "http://beta.friendfeed.com"
+            del url_args["beta"]
+        else:
+            url = "http://friendfeed.com"
         args = urlencode(url_args)
-        url = "http://friendfeed.com" + uri + "?" + args
+        url += uri + "?" + args
         headers = {}
         if post_args is not None:
             # If we are POSTing then set the method/content-type (urllib2

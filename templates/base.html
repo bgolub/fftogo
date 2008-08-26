@@ -26,7 +26,7 @@
             .profile img.picture { float: left; margin-bottom: 10px; margin-right: 10px; }
             .profile .section { margin-top: 5px; }
             ul.entries { clear: both; margin-top: 10px; }
-            ul.entries li.entry, ul.rooms li.room { margin-bottom: 10px; }
+            ul.entries li.entry, ul.rooms li.room, ul.lists li.list { margin-bottom: 10px; }
             ul.comments li { margin-top: 5px; padding-left: 20px ;}
             ul.comments li.comment { background: url('/static/images/quote.png') 2px 2px no-repeat; }
             ul.comments li.permalink { font-style: italic; }
@@ -64,7 +64,11 @@
                 </li>
                 <li>
                     2
-                    <a href="{% url user request.session.nickname %}" accesskey="2">Me</a>
+                    <a href="{% url lists %}" accesskey="2">Lists</a>
+                </li>
+                <li>
+                    3
+                    <a href="{% url user request.session.nickname %}" accesskey="3">Me</a>
                 </li>
             {% else %}
                 <li>
@@ -73,12 +77,12 @@
                 </li>
             {% endif %}
             <li>
-                3
-                <a href="{% url public %}" accesskey="3">Everyone</a>
+                4
+                <a href="{% url public %}" accesskey="4">Everyone</a>
             </li>
             <li>
-                4
-                <a href="{% url search %}" accesskey="4">Search</a>
+                5
+                <a href="{% url search %}" accesskey="5">Search</a>
             </li>
         </ul>
     </div>

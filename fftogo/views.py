@@ -468,6 +468,64 @@ def room(request, nickname):
         return atom(entries)
     return render_to_response('room.html', extra_context, context_instance=RequestContext(request))
 
+def list(request, nickname):
+    '''Render a list feed.
+
+    Authentication is required.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    try:
+        start = max(int(request.GET.get('start', 0)), 0)
+    except:
+        start = 0
+    service = request.GET.get('service', None)
+    num = int(request.session.get('num', NUM))
+    data = f.fetch_list_feed(nickname, num=num, start=start, service=service)
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
+    profile = f.fetch_list_profile(nickname)
+    entries = [entry for entry in data['entries'] if not entry['hidden']]
+    hidden = [entry for entry in data['entries'] if entry['hidden']]
+    extra_context = {
+        'entries': entries,
+        'next': start + num,
+        'hidden': hidden,
+        'profile': profile,
+        'list': nickname,
+    }
+    if start > 0:
+        extra_context['has_previous'] = True
+        extra_context['previous'] = max(start - num, 0)
+    if request.GET.get('output', 'html') == 'atom':
+        return atom(entries)
+    return render_to_response('list.html', extra_context, context_instance=RequestContext(request))
+
+def lists(request):
+    '''Display the authenticated users lists
+    
+    Authentication is required.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    data = f.fetch_user_profile(request.session['nickname'])
+    if 'errorCode' in data:
+        if data['statusCode'] == 401:
+            del request.session['nickname']
+            del request.session['key']
+        return render_to_response('error.html', data, context_instance=RequestContext(request))
+    extra_context = {
+        'lists': data['lists'],
+    }
+    return render_to_response('lists.html', extra_context, context_instance=RequestContext(request))
+
 def rooms(request):
     '''Display the authenticated users rooms page or a list of the users rooms
 

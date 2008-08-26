@@ -1,0 +1,13 @@
+{% extends "entries.html" %}
+
+{% load fftogo_tags %}
+
+{% block title %}
+    {% firstof profile.name profile.nickname %}
+{% endblock %}
+
+{% block below_share %}
+    <div class="profile">
+        <strong>{% firstof profile.name profile.nickname %}</strong>
+    </div>
+{% endblock %}
