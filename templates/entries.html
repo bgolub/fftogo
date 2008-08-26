@@ -64,9 +64,7 @@
         {% if request.session.nickname %}
             <form method="post" action="/share/">
                 <input type="hidden" name="next" value="{{ request.path }}" />
-                {% if room %}
-                    <input type="hidden" name="room" value="{{ room }}" />
-                {% endif %}
+                {% block extra_post %}{% endblock %}
                 <input name="title" />
                 <input type="submit" value="{% block share_button_value %}Share{% endblock %}" />
             </form>
@@ -82,27 +80,25 @@
             <li id="{{ entry.id }}" class="entry">
             {% if not entry.hidden %}
                 <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
-                {% if entry.room %}
-                    {% ifnotequal entry.room.nickname room %}
+                {% block room_prefix %}
+                    {% if entry.room %}
                         <a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
-                    {% endifnotequal %}
-                {% endif %}
-                {% if not entry.anonymous %}
-                    {% if not entry.user.nickname %}
-                        <a href="{% url user entry.user.id %}">{{ entry.user.name }}</a>
-                    {% else %}
-                        {% ifnotequal entry.user.nickname profile.nickname %}
-                            <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
-                        {% endifnotequal %}
                     {% endif %}
-                {% endif %}
-                {% ifnotequal entry.user.nickname profile.nickname %}
-                    {% if not permalink %}
-                        {% if entry.friendof %}
-                            (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
+                {% endblock %}
+                {% block user_prefix %}
+                    {% if not entry.anonymous %}
+                        {% if not entry.user.nickname %}
+                            <a href="{% url user entry.user.id %}">{{ entry.user.name }}</a>
+                        {% else %}
+                            <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
                         {% endif %}
                     {% endif %}
-                {% endifnotequal %}
+                {% endblock %}
+                {% block friend_of %}
+                    {% if entry.friendof %}
+                        (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
+                    {% endif %}
+                {% endblock %}
                 {{ entry|find_verb }}
                 {% ifequal entry.service.id 'twitter' %}
                     {% if request.session.googlemobileproxy %}

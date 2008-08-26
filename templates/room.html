@@ -10,6 +10,10 @@
     <link rel="shortcut icon" href="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=medium" type="image/jpeg" />
 {% endblock %}
 
+{% block extra_post %}
+    <input type="hidden" name="room" value="{{ profile.nickname }}" />
+{% endblock %}
+
 {% block share_button_value %}Share to {% firstof profile.name profile.nickname %}{% endblock %}
 
 {% block below_share %}
@@ -25,3 +29,5 @@
         </div>
     </div>
 {% endblock %}
+
+{% block room_prefix %}{% endblock %}
