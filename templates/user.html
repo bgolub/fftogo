@@ -51,6 +51,10 @@
     </div>
 {% endblock %}
 
-{% block user_prefix %}{% endblock %}
+{% block user_prefix %}
+    {% if type %}
+        {{ block.super }}
+    {% end %} 
+{% endblock %}
 
 {% block friend_of %}{% endblock %}
