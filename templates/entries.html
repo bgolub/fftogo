@@ -147,12 +147,10 @@
                                 <a href="{% url entry_like entry.id %}?next={{ request.path }}">Like</a>
                             {% endif %}
                         {% endif %}
-                        {% if not entry.room %}
-                            {% ifnotequal entry.user.nickname request.session.nickname %}
-                                -
-                                <a href="{% url entry_hide entry.id %}?next={{ request.path }}">Hide</a>
-                            {% endifnotequal %}
-                        {% endif %}
+                        {% block hide %}
+                            -
+                            <a href="{% url entry_hide entry.id %}?next={{ request.path }}">Hide</a>
+                        {% endblock %}
                         {% ifequal entry.user.nickname request.session.nickname %}
                             -
                             <a href="{% url entry_delete entry.id %}?next={{ request.path }}">Delete</a>
