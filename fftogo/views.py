@@ -632,7 +632,7 @@ def user(request, nickname, type=None):
     Authentication is not required but is used if set.
 
     nickname is the user's nickname.
-    type can be None (default), 'comments', 'likes', or 'discussion'
+    type can be None (default), 'comments', 'likes', 'discussion', or 'friends'
     '''
     if request.session.get('nickname', None):
         f = friendfeed.FriendFeed(request.session['nickname'],
@@ -653,6 +653,9 @@ def user(request, nickname, type=None):
             service=service)
     elif type == 'discussion':
         data = f.fetch_user_discussion_feed(nickname, num=num, start=start,
+            service=service)
+    elif type == 'friends':
+        data = f.fetch_user_friends_feed(nickname, num=num, start=start,
             service=service)
     else:
         data = f.fetch_user_feed(nickname, num=num, start=start,

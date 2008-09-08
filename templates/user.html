@@ -46,6 +46,12 @@
                 {% else %}
                     <a href="{% url user_type profile.nickname,"discussion" %}">Both</a>
                 {% endifequal %}
+                -
+                {% ifequal type 'friends' %}
+                    {{ profile.name }} and Friends
+                {% else %}
+                    <a href="{% url user_type profile.nickname,"friends" %}">{{ profile.name }} and Friends</a>
+                {% endifequal %}
             </div>
         {% endif %}
     </div>

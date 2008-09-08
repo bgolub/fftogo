@@ -182,6 +182,13 @@ class FriendFeed(object):
             "/api/feed/user/" + urllib.quote_plus(nickname) + "/discussion",
             **kwargs)
 
+    def fetch_user_friends_feed(self, nickname, **kwargs):
+        """Returns the entries from the given user and their friends."""
+        kwargs["beta"] = 1
+        return self._fetch_feed(
+            "/api/feed/user/" + urllib.quote_plus(nickname) + "/friends",
+            **kwargs)
+
     def fetch_multi_user_feed(self, nicknames, **kwargs):
         """Returns a merged feed with all of the given users' entries.
 
