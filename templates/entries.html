@@ -172,7 +172,7 @@
                                     {% endif %}
                                 {% endif %}
                                 {% if like.permalink %}
-                                    <a href="{% url entry entry.id %}">{{ like.num|apnumber }} other {{ like.num|pluralize:"person,people" }}</a>
+                                    <a href="{% url entry entry.id %}">{{ like.num }} other {{ like.num|pluralize:"person,people" }}</a>
                                 {% else %}
                                     <a href="{% url user like.user.nickname %}">{% ifequal like.user.nickname request.session.nickname %}You{% else %}{{ like.user.name }}{% endifequal %}</a>
                                 {% endif %}
@@ -185,7 +185,7 @@
                             {% for comment in entry.comments|shorten_comments:entries %}
                                 {% if comment.permalink %}
                                     <li class="permalink">
-                                        <a href="{% url entry entry.id %}">Show {{ comment.num|apnumber }} more comment{{ comment.num|pluralize }}</a>
+                                        <a href="{% url entry entry.id %}">{{ comment.num }} more comment{{ comment.num|pluralize }}</a>
                                     </li>
                                 {% else %}
                                     <li id="{{ comment.id }}" class="comment">
@@ -230,7 +230,7 @@
     </ul>
     {% if hidden %}
         <div class="hidden">
-            {{ hidden|length|apnumber|capfirst }} entr{{ hidden|length|pluralize:"y,ies"}} hidden
+            {{ hidden|length }} entr{{ hidden|length|pluralize:"y,ies"}} hidden
         </div>
     {% endif %}
 {% endblock %}
