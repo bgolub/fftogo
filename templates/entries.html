@@ -124,7 +124,7 @@
                             {% for media in entry.media|filter_media %}
                                 {% if media.thumbnails %}
                                     {% for thumbnail in media.thumbnails|filter_thumbnails %}
-                                        <img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title entry.title %}" />
+                                        <a href="{% firstof media.link entry.link %}"><img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title media.title entry.title %}" title="{% firstof thumbnail.title media.title entry.title %}" /></a>
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
