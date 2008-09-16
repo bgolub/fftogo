@@ -114,7 +114,7 @@
                             "{{ entry.title|urlizetrunc:30 }}"
                         {% endif %}
                     {% else %}
-                        <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}" {% if request.session.newwindow %}target="_blank"{% endif %}>{{ entry.title }}</a>
+                        <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}"{% if request.session.newwindow %} target="_blank"{% endif %}>{{ entry.title }}</a>
                     {% endif %}
                 {% endifequal %}
                 on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
@@ -124,7 +124,7 @@
                             {% for media in entry.media|filter_media %}
                                 {% if media.thumbnails %}
                                     {% for thumbnail in media.thumbnails|filter_thumbnails %}
-                                        <a href="{% firstof media.link entry.link %}"><img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title media.title entry.title %}" title="{% firstof thumbnail.title media.title entry.title %}" /></a>
+                                        <a href="{% firstof media.link entry.link %}"{% if request.session.newwindow %} target="_blank"{% endif %}"><img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title media.title entry.title %}" title="{% firstof thumbnail.title media.title entry.title %}" /></a>
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}
