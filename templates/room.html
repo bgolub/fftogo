@@ -19,7 +19,7 @@
 {% block below_share %}
     <div class="profile">
         <img class="picture" src="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=medium" alt="{% firstof profile.name profile.nickname %}" />
-        <strong>{% firstof profile.name profile.nickname %}</strong>
+        <strong><a href="{{ request.path }}">{% firstof profile.name profile.nickname %}</a></strong>
         <div class="section">
             {% if request.session.googlemobileproxy %}
                 {{ profile.description|urlizetrunc:30|gmpize|safe }}

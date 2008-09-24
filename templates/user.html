@@ -13,7 +13,7 @@
         {% if profile.nickname %}
             <img class="picture" src="http://friendfeed.com/{{ profile.nickname }}/picture?size=medium" alt="{{ profile.name }}" />
         {% endif %}
-        <strong>{{ profile.name }}</strong>
+        <strong><a href="{% if profile.nickname %}{% url user profile.nickname %}{% else %}{{ request.path }}{% endif %}">{{ profile.name }}</a></strong>
         <div class="section">
             {% for service in profile.services %}
 		{% ifnotequal service.id "facebook" %}
