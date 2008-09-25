@@ -11,9 +11,11 @@
 {% endblock %}
 
 {% block share %}
-    {% ifequal request.session.nickname profile.nickname %}
-        {{ block.super }}
-    {% endifequal %}
+    {% if not type %}
+        {% ifequal request.session.nickname profile.nickname %}
+            {{ block.super }}
+        {% endifequal %}
+    {% endif %}
 {% endblock %}
 
 {% block below_share %}
