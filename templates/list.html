@@ -4,6 +4,8 @@
     {% firstof profile.name profile.nickname %}
 {% endblock %}
 
+{% block share %}{% endblock %}
+
 {% block below_share %}
     <div class="profile">
         <strong><a href="{{ request.path }}">{% firstof profile.name profile.nickname %}</a></strong>

@@ -71,7 +71,7 @@
     {% block above_share %}
     {% endblock %}
     {% block share %}
-        {% if request.session.nickname %}
+        {% if request.session.nickname and not request.GET.start %}
             <form method="post" action="/share/">
                 <input type="hidden" name="next" value="{{ request.path }}" />
                 {% block extra_post %}{% endblock %}

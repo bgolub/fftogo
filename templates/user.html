@@ -10,6 +10,12 @@
     <link rel="shortcut icon" href="http://friendfeed.com/{{ profile.nickname }}/picture?size=medium" type="image/jpeg" />
 {% endblock %}
 
+{% block share %}
+    {% ifequal request.session.nickname profile.nickname %}
+        {{ block.super }}
+    {% endifequal %}
+{% endblock %}
+
 {% block below_share %}
     <div class="profile">
         {% if profile.nickname %}
