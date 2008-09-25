@@ -59,12 +59,16 @@
             {% ifequal request.message 'unsubscribed' %}
                 Unsubscribed from <a href="{% url user profile.nickname %}">{% firstof profile.name profile.nickname %}</a>
                 -
-                <a href="{% url user_subscribe profile.nickname %}">Undo</a>
+                <form style="display: inline;" method="post" action="{% url user_subscribe profile.nickname %}">
+                    <input type="submit" value="Undo" />
+                </form>
             {% endifequal %}
             {% ifequal request.message 'subscribed' %}
                 Subscribed to <a href="{% url user profile.nickname %}">{% firstof profile.name profile.nickname %}</a>
                 -
-                <a href="{% url user_unsubscribe profile.nickname %}">Undo</a>
+                <form style="display: inline;" method="post" action="{% url user_unsubscribe profile.nickname %}">
+                    <input type="submit" value="Undo" />
+                </form>
             {% endifequal %}
         </div>
     {% endif %}

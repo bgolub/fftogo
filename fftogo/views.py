@@ -698,6 +698,8 @@ def user_subscribe(request, nickname):
 
     Authentication is required.
     '''
+    if not request.method == 'POST':
+        return HttpResponseRedirect(reverse('user', args=[nickname]))
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
@@ -716,6 +718,8 @@ def user_unsubscribe(request, nickname):
 
     Authentication is required.
     '''
+    if not request.method == 'POST':
+        return HttpResponseRedirect(reverse('user', args=[nickname]))
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],

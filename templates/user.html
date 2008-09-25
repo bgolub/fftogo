@@ -27,11 +27,9 @@
         {% if request.session.nickname and profile.nickname %}
             {% ifnotequal request.session.nickname profile.nickname %}
                 <div class="section">
-                    {% if subscribed %}
-                        <a href="{% url user_unsubscribe profile.nickname %}">Unsubscribe</a>
-                    {% else %}
-                        <a href="{% url user_subscribe profile.nickname %}">Subscribe</a>
-                    {% endif %}
+                    <form method="post" action="{% if subscribed %}{% url user_unsubscribe profile.nickname %}{% else %}{% url user_subscribe profile.nickname %}{% endif %}">
+                        <input type="submit" value="{% if subscribed %}Unsubscribe{% else %}Subscribe{% endif %}" />
+                    </form>
                 </div>
             {% endifnotequal %}
         {% endif %}
