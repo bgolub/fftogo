@@ -1,14 +1,15 @@
+import friendfeed
+import urllib
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import feedgenerator
+from fftogo.forms import CommentForm, LoginForm, SearchForm, SettingsForm
 from google.appengine.api import memcache
 
-import friendfeed
-
-CACHE_TIME = settings.CACHE_TIME
+PUBLIC_CACHE_TIME = settings.PUBLIC_CACHE_TIME
 FONT_SIZE = settings.FONT_SIZE
 GMP = settings.GMP
 MEDIA = settings.MEDIA
@@ -121,7 +122,6 @@ def entry_comment(request, entry):
     '''
     if not request.session.get('nickname', None):
         return HttpResponseRedirect(reverse('login'))
-    from fftogo.forms import CommentForm
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -333,7 +333,6 @@ def home(request):
 def login(request):
     '''Log a user in.
     '''
-    from fftogo.forms import LoginForm
     extra_context = {}
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -380,7 +379,7 @@ def public(request):
         data = f.fetch_public_feed(num=num, start=start, service=service)
         if 'errorCode' in data:
             return error(request, data)
-        memcache.set(key, data, CACHE_TIME)
+        memcache.set(key, data, PUBLIC_CACHE_TIME)
     entries = data['entries']
     extra_context = {
         'entries': entries,
@@ -531,7 +530,6 @@ def search(request):
     Search operates on a 'search' paramater in the GET dict that works the same
     way the FriendFeed search works (who:everyone would search the public feed).
     ''' 
-    from fftogo.forms import SearchForm
     if not 'search' in request.GET:
         extra_context = {
             'form': SearchForm(),
@@ -581,7 +579,6 @@ def settings(request):
     Authentication is not required (because these settings are just stored in
     a session; not on a user object).
     '''
-    from fftogo.forms import SettingsForm
     extra_context = {}
     if request.method == 'POST':
         form = SettingsForm(request.POST)
@@ -637,8 +634,19 @@ def user(request, nickname, type=None):
     if request.session.get('nickname', None):
         f = friendfeed.FriendFeed(request.session['nickname'],
             request.session['key'])
+        key = 'profile/' + request.session['nickname']
+        try:
+            current_user = memcache.get(key)
+        except:
+            current_user = None
+        if not current_user:
+            current_user = f.fetch_user_profile(request.session['nickname']) 
+            memcache.set(key, current_user, 60*60)
+        subscriptions = [s['nickname'] for s in current_user['subscriptions']]
+        subscribed = nickname in subscriptions
     else:
         f = friendfeed.FriendFeed()
+        subscribed = False
     try:
         start = max(int(request.GET.get('start', 0)), 0)
     except:
@@ -675,6 +683,7 @@ def user(request, nickname, type=None):
         'hidden': hidden,
         'next': start + num,
         'profile': profile,
+        'subscribed': subscribed,
         'type': type,
     }
     if start > 0:
@@ -683,3 +692,39 @@ def user(request, nickname, type=None):
     if request.GET.get('output', 'html') == 'atom':
         return atom(entries)
     return render_to_response('user.html', extra_context, context_instance=RequestContext(request))
+
+def user_subscribe(request, nickname):
+    '''Subscribe to a user.
+
+    Authentication is required.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    data = f.user_subscribe(nickname)
+    if 'errorCode' in data:
+        return error(request, data)
+    memcache.delete('profile/' + request.session['nickname'])
+    args = {
+        "message": data.get("status", "")
+    }
+    return HttpResponseRedirect(reverse('user', args=[nickname]) + '?' + urllib.urlencode(args))
+
+def user_unsubscribe(request, nickname):
+    '''Unsubscribe to a user.
+
+    Authentication is required.
+    '''
+    if not request.session.get('nickname', None):
+        return HttpResponseRedirect(reverse('login'))
+    f = friendfeed.FriendFeed(request.session['nickname'],
+        request.session['key'])
+    data = f.user_unsubscribe(nickname)
+    if 'errorCode' in data:
+        return error(request, data)
+    memcache.delete('profile/' + request.session['nickname'])
+    args = {
+        "message": data.get("status", "")
+    }
+    return HttpResponseRedirect(reverse('user', args=[nickname]) + '?' + urllib.urlencode(args))

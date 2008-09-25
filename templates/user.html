@@ -1,5 +1,7 @@
 {% extends "entries.html" %}
 
+{% load fftogo_tags %}
+
 {% block title %}
     {{ profile.name }}
 {% endblock %}
@@ -11,9 +13,20 @@
 {% block below_share %}
     <div class="profile">
         {% if profile.nickname %}
-            <img class="picture" src="http://friendfeed.com/{{ profile.nickname }}/picture?size=medium" alt="{{ profile.name }}" />
+            <img class="picture" src="http://friendfeed.com/{{ profile.nickname }}/picture" alt="{{ profile.name }}" />
         {% endif %}
         <strong><a href="{% if profile.nickname %}{% url user profile.nickname %}{% else %}{{ request.path }}{% endif %}">{{ profile.name }}</a></strong>
+        {% if request.session.nickname and profile.nickname %}
+            {% ifnotequal request.session.nickname profile.nickname %}
+                <div class="section">
+                    {% if subscribed %}
+                        <a href="{% url user_unsubscribe profile.nickname %}">Unsubscribe</a>
+                    {% else %}
+                        <a href="{% url user_subscribe profile.nickname %}">Subscribe</a>
+                    {% endif %}
+                </div>
+            {% endifnotequal %}
+        {% endif %}
         <div class="section">
             {% for service in profile.services %}
                 {% ifnotequal service.id "facebook" %}

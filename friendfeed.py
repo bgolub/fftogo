@@ -66,6 +66,14 @@ class FriendFeed(object):
         self.auth_nickname = auth_nickname
         self.auth_key = auth_key
 
+    def user_subscribe(self, nickname):
+        return self._fetch("/api/user/" + urllib.quote_plus(nickname) + 
+                           "/subscribe", {}) 
+
+    def user_unsubscribe(self, nickname):
+        return self._fetch("/api/user/" + urllib.quote_plus(nickname) + 
+                           "/subscribe", {"unsubscribe": 1 }) 
+
     def validate(self):
         """Validate the credentials."""
         return self._fetch("/api/validate", None)

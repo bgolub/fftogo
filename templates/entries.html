@@ -56,6 +56,16 @@
                 -
                 <a href="{% url entry_hide request.entry %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
+            {% ifequal request.message 'unsubscribed' %}
+                Unsubscribed from <a href="{% url user profile.nickname %}">{% firstof profile.name profile.nickname %}</a>
+                -
+                <a href="{% url user_subscribe profile.nickname %}">Undo</a>
+            {% endifequal %}
+            {% ifequal request.message 'subscribed' %}
+                Subscribed to <a href="{% url user profile.nickname %}">{% firstof profile.name profile.nickname %}</a>
+                -
+                <a href="{% url user_unsubscribe profile.nickname %}">Undo</a>
+            {% endifequal %}
         </div>
     {% endif %}
     {% block above_share %}
