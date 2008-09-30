@@ -45,7 +45,7 @@ def find_verb(value):
         'vimeo': 'published/liked',
         'yelp': 'reviewed',
         'youtube': 'published/favorited',
-        'zooomr': 'published',
+        'zooomr': 'published/favorited',
     }
     return services.get(value['service']['id'], 'posted')
  
