@@ -358,6 +358,16 @@ class FriendFeed(object):
                 comment["date"] = self._parse_date(comment["date"])
             for like in entry.get("likes", []):
                 like["date"] = self._parse_date(like["date"])
+            if self.auth_nickname:
+                indexes = dict((l["user"]["id"], i) for i, l in
+                    enumerate(entry["likes"]))
+                def priority(l):
+                    if l["user"]["nickname"] == self.auth_nickname:
+                        p = -1
+                    else:
+                        p = indexes[l["user"]["id"]]
+                    return p
+                entry["likes"].sort(key=priority)
         return result
 
     def _fetch(self, uri, post_args, **url_args):
