@@ -151,8 +151,10 @@
                         via <a class="via" href="{{ entry.via.url }}">{{ entry.via.name }}</a>
                     {% endif %}
                     {% block related %}
-                        -
-                        <a href="{% url related %}?url={{ entry.link|urlencode }}">Related</a>
+                        {% ifnotequal entry.service.id "googletalk" %}
+                            -
+                            <a href="{% url related %}?url={{ entry.link|urlencode }}">Related</a>
+                        {% endifnotequal %}
                     {% endblock %}
                     {% if request.session.nickname %}
                         -
