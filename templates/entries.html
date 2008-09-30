@@ -160,10 +160,8 @@
                         -
                         <a href="{% url entry_comment entry.id %}?next={{ request.path }}">Comment</a>
                         {% if entry|likeable:request.session.nickname %}
-                            -
-                            {% if request.session.nickname|liked:entry %}
-                                <a href="{% url entry_unlike entry.id %}?next={{ request.path }}">Un-like</a>
-                            {% else %}
+                            {% if not request.session.nickname|liked:entry %}
+                                -
                                 <a href="{% url entry_like entry.id %}?next={{ request.path }}">Like</a>
                             {% endif %}
                         {% endif %}
@@ -198,6 +196,9 @@
                                 {% endif %}
                             {% endfor %}
                             liked this
+                            {% if request.session.nickname|liked:entry %}
+                                (<a href="{% url entry_unlike entry.id %}?next={{ request.path }}">Un-like</a>)
+                            {% endif %}
                         </div>
                     {% endif %}
                     {% if entry.comments %}
