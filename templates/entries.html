@@ -93,7 +93,7 @@
         {% for entry in entries %}
             <li id="{{ entry.id }}" class="entry">
             {% if not entry.hidden %}
-                <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
+                <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
                 {% block room_prefix %}
                     {% if entry.room %}
                         <a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
@@ -150,6 +150,10 @@
                     {% if entry.via %}
                         via <a class="via" href="{{ entry.via.url }}">{{ entry.via.name }}</a>
                     {% endif %}
+                    {% block related %}
+                        -
+                        <a href="{% url related %}?url={{ entry.link|urlencode }}">Related</a>
+                    {% endblock %}
                     {% if request.session.nickname %}
                         -
                         <a href="{% url entry_comment entry.id %}?next={{ request.path }}">Comment</a>
@@ -254,10 +258,10 @@
         <div id="nav">
             {% if has_previous %}
                 7
-                <a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="7">Previous</a>
+                <a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}" accesskey="7">Previous</a>
             {% endif %}
             9
-            <a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" accesskey="9">Next</a>
+            <a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}" accesskey="9">Next</a>
             *
             <a href="#top" accesskey="*">Top</a>
         </div>

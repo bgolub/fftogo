@@ -392,6 +392,35 @@ def public(request):
         return atom(entries)
     return render_to_response('public.html', extra_context, context_instance=RequestContext(request))
 
+def related(request):
+    url = request.GET.get('url', None)
+    if not url:
+        raise Http404
+    if request.session.get('nickname', None):
+        f = friendfeed.FriendFeed(request.session['nickname'],
+            request.session['key'])
+    else:
+        f = friendfeed.FriendFeed()
+    try:
+        start = max(int(request.GET.get('start', 0)), 0)
+    except:
+        start = 0
+    service = request.GET.get('service', None)
+    num = int(request.session.get('num', NUM))
+    data = f.fetch_url_feed(url, num=num, start=start, service=service)
+    if 'errorCode' in data:
+        return error(request, data)
+    extra_context = {
+        'entries': data['entries'],
+        'next': start + num,
+    }
+    if start > 0:
+        extra_context['has_previous'] = True
+        extra_context['previous'] = max(start - num, 0)
+    if request.GET.get('output', 'html') == 'atom':
+        return atom(entries)
+    return render_to_response('related.html', extra_context, context_instance=RequestContext(request))
+
 def room(request, nickname):
     '''Render a room feed.
 

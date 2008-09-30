@@ -104,6 +104,10 @@ class FriendFeed(object):
             "undelete": '1',
         })
 
+    def fetch_url_feed(self, url, **kwargs):
+        return self._fetch_feed(
+            "/api/feed/url", url=url, **kwargs)
+
     def fetch_entry(self, entry_id):
         return self._fetch_feed(
             "/api/feed/entry/" + urllib.quote_plus(entry_id))
