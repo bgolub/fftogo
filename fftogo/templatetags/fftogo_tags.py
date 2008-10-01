@@ -17,7 +17,10 @@ def find_verb(value):
         'amazon': 'added',
         'brightkite': 'checked in',
         'delicious': 'bookmarked',
-        'digg': 'dugg',
+        'digg': {
+            'comment': 'commented on',
+            'digg': 'dugg',
+        },
         'diigo': 'bookmarked',
         'disqus': 'commented',
         'flickr': 'published/favorited',
@@ -25,29 +28,52 @@ def find_verb(value):
         'googletalk': 'had a new status message',
         'googlereader': 'shared',
         'googleshared': 'shared',
+        'internal': {
+            'link': 'posted a link',
+            'message': 'posted a message',
+        },
         'intensedebate': 'commented',
         'lastfm': 'loved',
         'librarything': 'added',
-        'linkedin': 'updated their job title',
+        'linkedin': {
+            'leftjob': 'left their job',
+            'newjob': 'got a new job',
+        },
         'magnolia': 'bookmarked',
         'misterwong': 'bookmarked',
         'mixx': 'submitted',
         'netflix': 'added',
         'netvibes': 'starred',
-        'pandora': 'bookmarked',
+        'pandora': {
+            'artist': 'bookmarked the artist',
+            'song': 'bookmarked the song',
+        },
         'picasa': 'published',
         'polyvore': 'created',
-        'reddit': 'liked',
+        'reddit': {
+            'comment': 'commented on',
+            'like': 'liked',
+        },
         'smugmug': 'published',
         'stumbleupon': 'stumbled upon',
         'tipjoy': 'tipped',
         'upcoming': 'added',
-        'vimeo': 'published/liked',
+        'vimeo': {
+            'like': 'liked',
+            'publish': 'published',
+        },
         'yelp': 'reviewed',
-        'youtube': 'published/favorited',
+        'youtube': {
+            'favorite': 'favorited',
+            'publish': 'published',
+        },
         'zooomr': 'published/favorited',
     }
-    return services.get(value['service']['id'], 'posted')
+    service = value['service']
+    type = service.get('entryType', None)
+    if type:
+        return services.get(service['id'], {}).get(type, 'posted')
+    return services.get(service['id'], 'posted')
  
 @register.filter
 def gmpize(value, arg=None):

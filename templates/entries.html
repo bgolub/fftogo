@@ -131,7 +131,9 @@
                         <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}"{% if request.session.newwindow %} target="_blank"{% endif %}>{{ entry.title }}</a>
                     {% endif %}
                 {% endifequal %}
-                on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
+                {% ifnotequal entry.service.id 'internal' %}
+                    on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
+                {% endifnotequal %}
                 {% if request.session.media %}
                     {% if entry.media %}
                         <div class="media">
