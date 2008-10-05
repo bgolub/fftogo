@@ -23,7 +23,10 @@ def find_verb(value):
         },
         'diigo': 'bookmarked',
         'disqus': 'commented',
-        'flickr': 'published/favorited',
+        'flickr': {
+            'favorite': 'favorited',
+            'publish': 'published',
+        },
         'goodreads': 'read',
         'googletalk': 'had a new status message',
         'googlereader': 'shared',
@@ -67,13 +70,19 @@ def find_verb(value):
             'favorite': 'favorited',
             'publish': 'published',
         },
-        'zooomr': 'published/favorited',
+        'zooomr': {
+            'favorite': 'favorited',
+            'publish': 'published',
+        },
     }
     service = value['service']
     type = service.get('entryType', None)
-    if type:
-        return services.get(service['id'], {}).get(type, 'posted')
-    return services.get(service['id'], 'posted')
+    try:
+        if type:
+            return services.get(service['id'], {}).get(type, 'posted')
+        return services.get(service['id'], 'posted')
+    except:
+        return 'posted'
  
 @register.filter
 def gmpize(value, arg=None):
