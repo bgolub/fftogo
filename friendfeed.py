@@ -393,7 +393,12 @@ class FriendFeed(object):
             headers["Authorization"] = "Basic %s" % token
         result = urlfetch.fetch(url, payload=payload, method=method,
             headers=headers)
-        data = parse_json(result.content)
+        try:
+            data = parse_json(result.content)
+        except Exception, e:
+            data = {
+                "errorCode": str(e),
+            }
         data['statusCode'] = result.status_code
         return data
 
