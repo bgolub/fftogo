@@ -15,6 +15,7 @@ def filter_thumbnails(value):
 def find_verb(value):
     services = {
         'amazon': 'added',
+        'backtype': 'commented on',
         'brightkite': 'checked in',
         'delicious': 'bookmarked',
         'digg': {
@@ -36,6 +37,7 @@ def find_verb(value):
             'message': 'posted a message',
         },
         'intensedebate': 'commented',
+        'joost': 'watched',
         'lastfm': 'loved',
         'librarything': 'added',
         'linkedin': {
@@ -65,6 +67,7 @@ def find_verb(value):
             'like': 'liked',
             'publish': 'published',
         },
+        'wakoopa': 'started using',
         'yelp': 'reviewed',
         'youtube': {
             'favorite': 'favorited',
@@ -104,6 +107,7 @@ def is_admin(value, arg):
 @register.filter
 def is_message(value):
     services = (
+        'facebook',
         'googletalk',
         'identica',
         'plurk',
