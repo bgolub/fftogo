@@ -24,6 +24,11 @@ def find_verb(value):
         },
         'diigo': 'bookmarked',
         'disqus': 'commented',
+        'facebook': {
+            'note': 'posted',
+            'post': 'shared',
+            'status': 'posted',
+        },
         'flickr': {
             'favorite': 'favorited',
             'publish': 'published',
@@ -67,7 +72,10 @@ def find_verb(value):
             'like': 'liked',
             'publish': 'published',
         },
-        'wakoopa': 'started using',
+        'wakoopa': {
+            'review': 'reviewed',
+            'use': 'started using',
+        },
         'yelp': 'reviewed',
         'youtube': {
             'favorite': 'favorited',
@@ -107,7 +115,6 @@ def is_admin(value, arg):
 @register.filter
 def is_message(value):
     services = (
-        'facebook',
         'googletalk',
         'identica',
         'plurk',
@@ -117,6 +124,8 @@ def is_message(value):
         return True 
     if value['service']['id'] == 'jaiku':
         return value['service']['profileUrl'].lower() in value['link'].lower()
+    if value['service']['id'] == 'facebook':
+        return value['service'].get('entryType', None) != 'post'
     return value['link'] == 'http://friendfeed.com/e/%s' % value['id']
 
 @register.filter
