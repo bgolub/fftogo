@@ -22,9 +22,9 @@
         <strong><a href="{{ request.path }}">{% firstof profile.name profile.nickname %}</a></strong>
         <div class="section">
             {% if request.session.googlemobileproxy %}
-                {{ profile.description|urlizetrunc:30|gmpize|safe }}
+                {{ profile.description|gmpize|safe }}
             {% else %}
-                {{ profile.description|urlizetrunc:30 }}
+                {{ profile.description|safe }}
             {% endif %}
         </div>
     </div>
