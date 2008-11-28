@@ -39,7 +39,7 @@ def atom(entries):
     return HttpResponse(f.writeString('utf-8'))
 
 def error(request, data):
-    if data['statusCode'] == 401:
+    if data['statusCode'] == 401 and 'nickname' in request.session:
         del request.session['nickname']
         del request.session['key']
     return render_to_response('error.html', data, context_instance=RequestContext(request))
