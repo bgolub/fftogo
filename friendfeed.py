@@ -374,7 +374,9 @@ class FriendFeed(object):
         # Use Django's urlencode because it is unicode safe
         from django.utils.http import urlencode
         url_args["format"] = "json"
-        url_args["apikey"] = settings.APIKEY 
+        APIKEY = getattr(settings, "APIKEY", None)
+        if APIKEY:
+            url_args["apikey"] = APIKEY
         args = urlencode(url_args)
         url = "http://friendfeed.com" + uri + "?" + args
         headers = {}
