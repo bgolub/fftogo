@@ -17,6 +17,10 @@ def find_verb(value):
         'amazon': 'added',
         'backtype': 'commented on',
         'brightkite': 'checked in',
+        'dailymotion': {
+            'favorite': 'favorited',
+            'publish': 'published',
+        },
         'delicious': 'bookmarked',
         'digg': {
             'comment': 'commented on',
@@ -29,14 +33,24 @@ def find_verb(value):
             'post': 'shared',
             'status': 'posted',
         },
+        'feed': {
+            'post': 'posted',
+            'status': 'posted',
+        },
         'flickr': {
             'favorite': 'favorited',
             'publish': 'published',
         },
+        'fotolog': 'published',
         'goodreads': 'read',
         'googletalk': 'had a new status message',
         'googlereader': 'shared',
         'googleshared': 'shared',
+        'hatena': {
+            'bookmark': 'bookmarked',
+            'photo': 'published',
+            'post': 'posted',
+        },
         'internal': {
             'link': 'posted a link',
             'message': 'posted a message',
@@ -50,6 +64,10 @@ def find_verb(value):
             'newjob': 'got a new job',
         },
         'magnolia': 'bookmarked',
+        'meneame': {
+            'like': 'liked',
+            'comment': 'commented on',
+        },
         'misterwong': 'bookmarked',
         'mixx': 'submitted',
         'netflix': 'added',
@@ -58,12 +76,14 @@ def find_verb(value):
             'artist': 'bookmarked the artist',
             'song': 'bookmarked the song',
         },
+        'photobucket': 'published',
         'picasa': 'published',
         'polyvore': 'created',
         'reddit': {
             'comment': 'commented on',
             'like': 'liked',
         },
+        'smotri': 'published',
         'smugmug': 'published',
         'stumbleupon': 'stumbled upon',
         'tipjoy': 'tipped',
@@ -125,6 +145,8 @@ def is_message(value):
     if value['service']['id'] == 'jaiku':
         return value['service']['profileUrl'].lower() in value['link'].lower()
     if value['service']['id'] == 'facebook':
+        return value['service'].get('entryType', None) != 'post'
+    if value['service']['id'] == 'feed':
         return value['service'].get('entryType', None) != 'post'
     return value['link'] == 'http://friendfeed.com/e/%s' % value['id']
 
