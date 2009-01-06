@@ -70,7 +70,10 @@ def find_verb(value):
         },
         'misterwong': 'bookmarked',
         'mixx': 'submitted',
-        'netflix': 'added',
+        'netflix': {
+            'queue': 'added to their queue',
+            'instant': 'added to their instant queue',
+        },
         'netvibes': 'starred',
         'pandora': {
             'artist': 'bookmarked the artist',
