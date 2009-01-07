@@ -1,0 +1,4 @@
+*.pyc
+app.yaml
+index.yaml
+settings.py
