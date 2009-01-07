@@ -10,60 +10,60 @@
 {% endblock %}
 
 {% block above_content %}
-    {% if request.message %}
+    {% if request.GET.message %}
         <div class="message">
-            {% ifequal request.message 'settings' %}
+            {% ifequal request.GET.message 'settings' %}
                 Did you know that you can <a href="{% url settings %}">change your font size and other settings</a>?
             {% endifequal %}
-            {% ifequal request.message 'shared' %}
+            {% ifequal request.GET.message 'shared' %}
                 Entry created
                 -
-                <a href="{% url entry_delete request.entry %}"?next={{ request.path }}">Undo</a>
+                <a href="{% url entry_delete request.GET.entry %}"?next={{ request.path }}">Undo</a>
             {% endifequal %}
-            {% ifequal request.message 'deleted' %}
-                {% if request.comment %}
+            {% ifequal request.GET.message 'deleted' %}
+                {% if request.GET.comment %}
                     Comment deleted
                     -
-                    <a href="{% url comment_undelete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+                    <a href="{% url comment_undelete request.GET.entry,request.GET.comment %}?next={{ request.path }}">Undo</a>
                 {% else %}
                     Entry deleted
                     -
-                    <a href="{% url entry_undelete request.entry %}"?next={{ request.path }}">Undo</a>
+                    <a href="{% url entry_undelete request.GET.entry %}"?next={{ request.path }}">Undo</a>
                 {% endif %}
             {% endifequal %}
-            {% ifequal request.message 'commented' %}
+            {% ifequal request.GET.message 'commented' %}
                 Comment created
                 -
-                <a href="{% url comment_delete request.entry,request.comment %}?next={{ request.path }}">Undo</a>
+                <a href="{% url comment_delete request.GET.entry,request.GET.comment %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
-            {% ifequal request.message 'liked' %}
+            {% ifequal request.GET.message 'liked' %}
                 Entry liked
                 -
-                <a href="{% url entry_unlike request.entry %}?next={{ request.path }}">Undo</a>
+                <a href="{% url entry_unlike request.GET.entry %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
-            {% ifequal request.message 'un-liked' %}
+            {% ifequal request.GET.message 'un-liked' %}
                 Entry un-liked
                 -
-                <a href="{% url entry_like request.entry %}?next={{ request.path }}">Undo</a>
+                <a href="{% url entry_like request.GET.entry %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
-            {% ifequal request.message 'hidden' %}
+            {% ifequal request.GET.message 'hidden' %}
                 Entry hidden
                 -
-                <a href="{% url entry_unhide request.entry %}?next={{ request.path }}">Undo</a>
+                <a href="{% url entry_unhide request.GET.entry %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
-            {% ifequal request.message 'un-hidden' %}
+            {% ifequal request.GET.message 'un-hidden' %}
                 Entry un-hidden
                 -
-                <a href="{% url entry_hide request.entry %}?next={{ request.path }}">Undo</a>
+                <a href="{% url entry_hide request.GET.entry %}?next={{ request.path }}">Undo</a>
             {% endifequal %}
-            {% ifequal request.message 'unsubscribed' %}
+            {% ifequal request.GET.message 'unsubscribed' %}
                 Unsubscribed from <a href="{% url user profile.nickname %}">{% firstof profile.name profile.nickname %}</a>
                 -
                 <form style="display: inline;" method="post" action="{% url user_subscribe profile.nickname %}">
                     <input type="submit" value="Undo" />
                 </form>
             {% endifequal %}
-            {% ifequal request.message 'subscribed' %}
+            {% ifequal request.GET.message 'subscribed' %}
                 Subscribed to <a href="{% url user profile.nickname %}">{% firstof profile.name profile.nickname %}</a>
                 -
                 <form style="display: inline;" method="post" action="{% url user_unsubscribe profile.nickname %}">
