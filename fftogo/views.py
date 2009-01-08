@@ -32,7 +32,7 @@ def atom(entries):
         f.add_item(
             title = entry['title'],
             link = entry['link'],
-            description = '<a href="http://friendfeed.com/e/%s">View in FriendFeed</a>' % entry['id'],
+            description = '<a href="http://www.fftogo.com/e/%s">View in fftogo</a>' % entry['id'],
             author_name = entry['user']['name'],
             pubdate = entry['updated'],
         )
