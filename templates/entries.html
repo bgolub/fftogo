@@ -93,47 +93,57 @@
         {% for entry in entries %}
             <li id="{{ entry.id }}" class="entry">
             {% if not entry.hidden %}
-                <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
-                {% block room_prefix %}
-                    {% if entry.room %}
-                        <a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
-                    {% endif %}
+                <div class="icon">
+                    <a href="{{ request.path }}?service={{ entry.service.id }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}"><img src="{{ entry.service.iconUrl }}" alt="{{ entry.service.name }}" /></a> 
+                </div>
+                {% block summary %}
+                  <div class="summary">
+                      {% block room_prefix %}
+                          {% if entry.room %}
+                              <a href="{% url room entry.room.nickname %}">{{ entry.room.name }}</a>:
+                          {% endif %}
+                      {% endblock %}
+                      {% block user_prefix %}
+                          {% if not entry.anonymous %}
+                              {% if not entry.user.nickname %}
+                                  <a href="{% url user entry.user.id %}">{{ entry.user.name }}</a>
+                              {% else %}
+                                  <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
+                              {% endif %}
+                          {% endif %}
+                      {% endblock %}
+                      {% block friend_of %}
+                          {% if entry.friendof %}
+                              (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
+                          {% endif %}
+                      {% endblock %}
+                      {% ifnotequal entry.service.id 'internal' %}
+                          {% if not entry.anonymous %}
+                              -
+                          {% endif %}
+                          <a href="{{ entry.service.profileUrl }}">{{ entry|summary }}</a>
+                      {% endifnotequal %}
+                  </div>
                 {% endblock %}
-                {% block user_prefix %}
-                    {% if not entry.anonymous %}
-                        {% if not entry.user.nickname %}
-                            <a href="{% url user entry.user.id %}">{{ entry.user.name }}</a>
-                        {% else %}
-                            <a href="{% url user entry.user.nickname %}">{% ifequal request.session.nickname entry.user.nickname %}You{% else %}{{ entry.user.name }}{% endifequal %}</a>
-                        {% endif %}
-                    {% endif %}
-                {% endblock %}
-                {% block friend_of %}
-                    {% if entry.friendof %}
-                        (friend of <a href="{% url user entry.friendof.nickname %}">{{ entry.friendof.name }}</a>)
-                    {% endif %}
-                {% endblock %}
-                {{ entry|find_verb }}
-                {% ifequal entry.service.id 'twitter' %}
-                    {% if request.session.googlemobileproxy %}
-                        "{{ entry.title|urlizetrunc:30|twitterize|gmpize|safe }}"
-                    {% else %}
-                        "{{ entry.title|urlizetrunc:30|twitterize|safe }}"
-                    {% endif %}
-                {% else %}
-                    {% if entry|is_message %}
+                <div class="title">
+                    {% ifequal entry.service.id 'twitter' %}
                         {% if request.session.googlemobileproxy %}
-                            "{{ entry.title|urlizetrunc:30|gmpize|safe }}"
+                            "{{ entry.title|urlizetrunc:30|twitterize|gmpize|safe }}"
                         {% else %}
-                            "{{ entry.title|urlizetrunc:30 }}"
+                            "{{ entry.title|urlizetrunc:30|twitterize|safe }}"
                         {% endif %}
                     {% else %}
-                        <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}"{% if request.session.newwindow %} target="_blank"{% endif %}>{{ entry.title }}</a>
-                    {% endif %}
-                {% endifequal %}
-                {% ifnotequal entry.service.id 'internal' %}
-                    on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
-                {% endifnotequal %}
+                        {% if entry|is_message %}
+                            {% if request.session.googlemobileproxy %}
+                                "{{ entry.title|urlizetrunc:30|gmpize|safe }}"
+                            {% else %}
+                                "{{ entry.title|urlizetrunc:30 }}"
+                            {% endif %}
+                        {% else %}
+                            <a href="{% if request.session.googlemobileproxy %}{{ entry.link|gmpize:1 }}{% else %}{{ entry.link }}{% endif %}"{% if request.session.newwindow %} target="_blank"{% endif %}>{{ entry.title }}</a>
+                        {% endif %}
+                    {% endifequal %}
+                </div>
                 {% if entry.media %}
                     <div class="media">
                         {% for media in entry.media|filter_media %}

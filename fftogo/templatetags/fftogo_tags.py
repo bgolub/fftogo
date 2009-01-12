@@ -12,111 +12,61 @@ def filter_thumbnails(value):
     return value[:1]
 
 @register.filter
-def find_verb(value):
+def summary(value):
     services = {
-        'amazon': 'added',
-        'backtype': 'commented on',
-        'brightkite': 'checked in',
         'dailymotion': {
-            'favorite': 'favorited',
-            'publish': 'published',
+            'favorite': 'favorites',
         },
-        'delicious': 'bookmarked',
         'digg': {
-            'comment': 'commented on',
-            'digg': 'dugg',
+            'comment': 'comments',
         },
-        'diigo': 'bookmarked',
-        'disqus': 'commented',
         'facebook': {
-            'note': 'posted',
-            'post': 'shared',
-            'status': 'posted',
-        },
-        'feed': {
-            'post': 'posted',
-            'status': 'posted',
+            'note': 'notes',
+            'post': 'posts',
         },
         'flickr': {
-            'favorite': 'favorited',
-            'publish': 'published',
+            'favorite': 'favorites',
         },
-        'fotolog': 'published',
-        'goodreads': 'read',
-        'googletalk': 'had a new status message',
-        'googlereader': 'shared',
-        'googleshared': 'shared',
         'hatena': {
-            'bookmark': 'bookmarked',
-            'photo': 'published',
-            'post': 'posted',
+            'bookmark': 'bookmarks',
+            'photo': 'photos',
+            'post': 'posts',
         },
-        'internal': {
-            'link': 'posted a link',
-            'message': 'posted a message',
-        },
-        'intensedebate': 'commented',
-        'joost': 'watched',
-        'lastfm': 'loved',
-        'librarything': 'added',
-        'linkedin': {
-            'leftjob': 'left their job',
-            'newjob': 'got a new job',
-        },
-        'magnolia': 'bookmarked',
         'meneame': {
-            'like': 'liked',
-            'comment': 'commented on',
+            'comment': 'comments',
         },
-        'misterwong': 'bookmarked',
-        'mixx': 'submitted',
         'netflix': {
-            'queue': 'added to their queue',
-            'instant': 'added to their instant queue',
+            'queue': 'queue',
+            'instant': 'instant queue',
         },
         'netvibes': 'starred',
         'pandora': {
-            'artist': 'bookmarked the artist',
-            'song': 'bookmarked the song',
+            'artist': 'artist',
         },
-        'photobucket': 'published',
-        'picasa': 'published',
-        'polyvore': 'created',
         'reddit': {
-            'comment': 'commented on',
-            'like': 'liked',
+            'comment': 'comments',
         },
-        'smotri': 'published',
-        'smugmug': 'published',
-        'stumbleupon': 'stumbled upon',
-        'tipjoy': 'tipped',
-        'upcoming': 'added',
         'vimeo': {
-            'like': 'liked',
-            'publish': 'published',
+            'like': 'favorites',
         },
         'wakoopa': {
-            'review': 'reviewed',
-            'use': 'started using',
+            'review': 'reviews',
         },
-        'yelp': 'reviewed',
         'youtube': {
-            'favorite': 'favorited',
-            'publish': 'published',
+            'favorite': 'favorites',
         },
         'zooomr': {
-            'favorite': 'favorited',
-            'publish': 'published',
+            'favorite': 'favorites',
         },
     }
     service = value['service']
-    type = service.get('entryType', None)
-    try:
-        if type:
-            return services.get(service['id'], {}).get(type, 'posted')
-        return services.get(service['id'], 'posted')
-    except:
-        return 'posted'
+    if service['id'] == 'internal':
+        return ''
+    entryType = service.get('entryType', None)
+    type = services.get(service['id'], {}).get(entryType)
+    if type:
+        return ' '.join([service['name'], type])
+    return service['name']
  
 @register.filter
 def gmpize(value, arg=None):
