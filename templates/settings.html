@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block content %}
+    {% if saved %}
+        <div class="message">
+            Settings saved. <a href="{% url home %}">Return to home feed</a>.
+        </div>
+    {% endif %}
     <form method="post" action="/settings/">
         <table>
             {{ form.as_table }}

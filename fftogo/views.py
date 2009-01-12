@@ -616,6 +616,7 @@ def settings(request):
             request.session['googlemobileproxy'] = form.data.get('googlemobileproxy', GMP)
             request.session['newwindow'] = form.data.get('newwindow', NEW_WINDOW)
             request.session['num'] = form.data['num']
+            extra_context['saved'] = True
     else:
         initial = {
             'fontsize': int(request.session.get('fontsize', FONT_SIZE)),
