@@ -134,18 +134,16 @@
                 {% ifnotequal entry.service.id 'internal' %}
                     on <a href="{{ entry.service.profileUrl }}">{{ entry.service.name }}</a>
                 {% endifnotequal %}
-                {% if request.session.media %}
-                    {% if entry.media %}
-                        <div class="media">
-                            {% for media in entry.media|filter_media %}
-                                {% if media.thumbnails %}
-                                    {% for thumbnail in media.thumbnails|filter_thumbnails %}
-                                        <a href="{% firstof media.link entry.link %}"{% if request.session.newwindow %} target="_blank"{% endif %}"><img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title media.title entry.title %}" title="{% firstof thumbnail.title media.title entry.title %}" /></a>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                {% if entry.media %}
+                    <div class="media">
+                        {% for media in entry.media|filter_media %}
+                            {% if media.thumbnails %}
+                                {% for thumbnail in media.thumbnails|filter_thumbnails %}
+                                    <a href="{% firstof media.link entry.link %}"{% if request.session.newwindow %} target="_blank"{% endif %}"><img src="{{ thumbnail.url }}" alt="{% firstof thumbnail.title media.title entry.title %}" title="{% firstof thumbnail.title media.title entry.title %}" /></a>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <div class="meta">
                     <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>

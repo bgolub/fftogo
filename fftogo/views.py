@@ -614,14 +614,12 @@ def settings(request):
         if form.is_valid():
             request.session['fontsize'] = form.data['fontsize']
             request.session['googlemobileproxy'] = form.data.get('googlemobileproxy', GMP)
-            request.session['media'] = form.data.get('media', MEDIA)
             request.session['newwindow'] = form.data.get('newwindow', NEW_WINDOW)
             request.session['num'] = form.data['num']
     else:
         initial = {
             'fontsize': int(request.session.get('fontsize', FONT_SIZE)),
             'googlemobileproxy': request.session.get('googlemobileproxy', GMP),
-            'media': request.session.get('media', MEDIA),
             'newwindow': request.session.get('newwindow', NEW_WINDOW),
             'num': int(request.session.get('num', 30)),
         }
