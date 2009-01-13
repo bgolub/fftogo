@@ -144,7 +144,7 @@
                         {% endif %}
                     {% endifequal %}
                 </div>
-                {% if entry.media %}
+                {% if entry.media and not request.session.nomedia %}
                     <div class="media">
                         {% for media in entry.media|filter_media %}
                             {% if media.thumbnails %}

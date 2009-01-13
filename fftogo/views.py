@@ -16,6 +16,7 @@ MEDIA = settings.MEDIA
 NEW_WINDOW = settings.NEW_WINDOW
 NUM = settings.NUM
 VIA = settings.VIA
+NO_MEDIA = settings.NO_MEDIA
 
 def atom(entries):
     '''Build and return an Atom feed.
@@ -616,6 +617,7 @@ def settings(request):
             request.session['googlemobileproxy'] = form.data.get('googlemobileproxy', GMP)
             request.session['newwindow'] = form.data.get('newwindow', NEW_WINDOW)
             request.session['num'] = form.data['num']
+            request.session['nomedia'] = form.data.get('nomedia', NO_MEDIA)
             extra_context['saved'] = True
     else:
         initial = {
@@ -623,6 +625,7 @@ def settings(request):
             'googlemobileproxy': request.session.get('googlemobileproxy', GMP),
             'newwindow': request.session.get('newwindow', NEW_WINDOW),
             'num': int(request.session.get('num', 30)),
+            'nomedia': request.session.get('nomedia', NO_MEDIA),
         }
         form = SettingsForm(initial=initial)
     extra_context['form'] = form

@@ -23,3 +23,4 @@ class SettingsForm(forms.Form):
     num = forms.IntegerField(label='Number of entries', min_value=1, max_value=30, widget=IntegerWidget)
     newwindow = forms.BooleanField(label='Open links in a new window', required=False)
     googlemobileproxy = forms.BooleanField(label='Open links using Google Mobile Proxy', required=False)
+    nomedia = forms.BooleanField(label='Don\'t display media', required=False)
