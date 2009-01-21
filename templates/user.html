@@ -84,4 +84,8 @@
 
 {% block hide %}{% endblock %}
 
-{% block summary %}{% endblock %}
+{% block summary %}
+    {% if type %}
+      {{ block.super }}
+    {% endif %}
+{% endblock %}
