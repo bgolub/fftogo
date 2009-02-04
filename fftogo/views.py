@@ -561,8 +561,11 @@ def search(request):
     way the FriendFeed search works (who:everyone would search the public feed).
     ''' 
     if not 'search' in request.GET:
+        initial = {}
+        if request.session.get('nickname', None):
+            initial["search"] = "friends:%s" % request.session['nickname']
         extra_context = {
-            'form': SearchForm(),
+            'form': SearchForm(initial=initial),
         }
         return render_to_response('search_form.html', extra_context, context_instance=RequestContext(request))
     else:
