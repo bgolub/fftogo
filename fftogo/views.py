@@ -1,3 +1,4 @@
+import logging
 import friendfeed
 import urllib
 from django.conf import settings
@@ -17,6 +18,23 @@ NEW_WINDOW = settings.NEW_WINDOW
 NUM = settings.NUM
 VIA = settings.VIA
 NO_MEDIA = settings.NO_MEDIA
+
+def querydict_to_dict(arguments):
+    supported = set(['service', 'num', 'start'])
+    kwargs = {}
+    for name in arguments:
+        if name not in supported:
+            continue
+        value = arguments.get(name)
+        if value:
+            kwargs[str(name)] = value
+    return kwargs
+
+def get_integer_argument(request, name, default):
+    try:
+        return int(request.GET.get(name, default))
+    except (TypeError, ValueError):
+        return default
 
 def atom(entries):
     '''Build and return an Atom feed.
@@ -297,13 +315,9 @@ def home(request):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    service = request.GET.get('service', None)
-    num = int(request.session.get('num', NUM))
-    data = f.fetch_home_feed(num=num, start=start, service=service)
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
+    data = f.fetch_home_feed(**querydict_to_dict(request.GET))
     if 'errorCode' in data:
         return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
@@ -311,7 +325,9 @@ def home(request):
     new_start = start
     while len(entries) < num and (new_start - start) / num < 3:
         new_start = new_start + num
-        data = f.fetch_home_feed(num=num, start=new_start, service=service)
+        kwargs = querydict_to_dict(request.GET)
+        kwargs['start'] = new_start
+        data = f.fetch_home_feed(**kwargs)
         if 'errorCode' in data:
             break
         more_entries = [entry for entry in data['entries'] if not entry['hidden']]
@@ -365,19 +381,15 @@ def public(request):
     we don't have to hit FriendFeed as often for it.
     '''
     f = friendfeed.FriendFeed()
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    service = request.GET.get('service', None)
-    num = int(request.session.get('num', NUM))
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
     key = 'public_%i_%i_%s' % (num, start, service)
     try:
         data = memcache.get(key)
     except:
         data = None
     if not data:
-        data = f.fetch_public_feed(num=num, start=start, service=service)
+        data = f.fetch_public_feed(**request.GET)
         if 'errorCode' in data:
             return error(request, data)
         memcache.set(key, data, PUBLIC_CACHE_TIME)
@@ -402,13 +414,9 @@ def related(request):
             request.session['key'])
     else:
         f = friendfeed.FriendFeed()
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    service = request.GET.get('service', None)
-    num = int(request.session.get('num', NUM))
-    data = f.fetch_url_feed(url, num=num, start=start, service=service)
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
+    data = f.fetch_url_feed(url, **request.GET)
     if 'errorCode' in data:
         return error(request, data)
     extra_context = {
@@ -434,13 +442,9 @@ def room(request, nickname):
             request.session['key'])
     else:
         f = friendfeed.FriendFeed()
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    service = request.GET.get('service', None)
-    num = int(request.session.get('num', NUM))
-    data = f.fetch_room_feed(nickname, num=num, start=start, service=service)
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
+    data = f.fetch_room_feed(nickname, **request.GET)
     if 'errorCode' in data:
         return error(request, data)
     profile = f.fetch_room_profile(nickname)
@@ -469,13 +473,9 @@ def list(request, nickname):
         return HttpResponseRedirect(reverse('login'))
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    service = request.GET.get('service', None)
-    num = int(request.session.get('num', NUM))
-    data = f.fetch_list_feed(nickname, num=num, start=start, service=service)
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
+    data = f.fetch_list_feed(nickname, **request.GET)
     if 'errorCode' in data:
         return error(request, data)
     profile = f.fetch_list_profile(nickname)
@@ -529,13 +529,9 @@ def rooms(request):
             }
             template = 'rooms_list.html'
     else:
-        try:
-            start = max(int(request.GET.get('start', 0)), 0)
-        except ValueError:
-            start = 0
-        service = request.GET.get('service', None)
-        num = int(request.session.get('num', NUM))
-        data = f.fetch_rooms_feed(num=num, start=start, service=service)
+        start = max(get_integer_argument(request, 'start', 0), 0)
+        num = get_integer_argument(request, 'num', NUM)
+        data = f.fetch_rooms_feed(num=num, **request.GET)
         if not 'errorCode' in data:
             entries = [entry for entry in data['entries'] if not entry['hidden']]
             hidden = [entry for entry in data['entries'] if entry['hidden']]
@@ -563,7 +559,7 @@ def search(request):
     if not 'search' in request.GET:
         initial = {}
         if request.session.get('nickname', None):
-            initial["search"] = "friends:%s" % request.session['nickname']
+            initial['search'] = 'friends:%s' % request.session['nickname']
         extra_context = {
             'form': SearchForm(initial=initial),
         }
@@ -580,20 +576,10 @@ def search(request):
             request.session['key'])
     else:
         f = friendfeed.FriendFeed()
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    num = int(request.session.get('num', NUM))
-    kwargs = {
-      "start": start,
-      "num": num,
-    }
-    service = request.GET.get('service', None)
-    if service:
-        kwargs["service"] = service
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
     search = form.data['search']
-    data = f.search(search, **kwargs)
+    data = f.search(search, **querydict_to_dict(request.GET))
     if 'errorCode' in data:
         return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
@@ -687,27 +673,19 @@ def user(request, nickname, type=None):
     else:
         f = friendfeed.FriendFeed()
         subscribed = False
-    try:
-        start = max(int(request.GET.get('start', 0)), 0)
-    except:
-        start = 0
-    service = request.GET.get('service', None)
-    num = int(request.session.get('num', NUM))
+    start = max(get_integer_argument(request, 'start', 0), 0)
+    num = get_integer_argument(request, 'num', NUM)
+    kwargs = querydict_to_dict(request.GET)
     if type == 'comments':
-        data = f.fetch_user_comments_feed(nickname, num=num, start=start,
-            service=service)
+        data = f.fetch_user_comments_feed(nickname, **kwargs)
     elif type == 'likes':
-        data = f.fetch_user_likes_feed(nickname, num=num, start=start,
-            service=service)
+        data = f.fetch_user_likes_feed(nickname, **kwargs)
     elif type == 'discussion':
-        data = f.fetch_user_discussion_feed(nickname, num=num, start=start,
-            service=service)
+        data = f.fetch_user_discussion_feed(nickname, **kwargs)
     elif type == 'friends':
-        data = f.fetch_user_friends_feed(nickname, num=num, start=start,
-            service=service)
+        data = f.fetch_user_friends_feed(nickname, **kwargs)
     else:
-        data = f.fetch_user_feed(nickname, num=num, start=start,
-            service=service)
+        data = f.fetch_user_feed(nickname, **kwargs)
     try:
         profile = f.fetch_user_profile(nickname)
     except:
@@ -749,7 +727,7 @@ def user_subscribe(request, nickname):
         return error(request, data)
     memcache.delete('profile/' + request.session['nickname'])
     args = {
-        "message": data.get("status", "")
+        'message': data.get('status', '')
     }
     return HttpResponseRedirect(reverse('user', args=[nickname]) + '?' + urllib.urlencode(args))
 
@@ -769,6 +747,6 @@ def user_unsubscribe(request, nickname):
         return error(request, data)
     memcache.delete('profile/' + request.session['nickname'])
     args = {
-        "message": data.get("status", "")
+        'message': data.get('status', '')
     }
     return HttpResponseRedirect(reverse('user', args=[nickname]) + '?' + urllib.urlencode(args))
