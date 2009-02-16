@@ -4,10 +4,11 @@ import sys
 
 # Remove the standard version of Django.
 for k in [k for k in sys.modules if k.startswith('django')]:
-  del sys.modules[k]
+    del sys.modules[k]
 
-# Import Django from a zipfile.
-sys.path.insert(0, os.path.abspath('django.zip'))
+# Import Django from a zipfile if we don't have it on our path.
+if "django" not in os.listdir(os.path.abspath(os.path.dirname(__file__))):
+    sys.path.insert(0, os.path.abspath('django.zip'))
 
 # Force sys.path to have our own directory first, in case we want to import
 # from it.
