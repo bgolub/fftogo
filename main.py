@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -5,12 +6,12 @@ import sys
 for k in [k for k in sys.modules if k.startswith('django')]:
   del sys.modules[k]
 
+# Import Django from a zipfile.
+sys.path.insert(0, os.path.abspath('django.zip'))
+
 # Force sys.path to have our own directory first, in case we want to import
 # from it.
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-# Import Django from a zipfile.
-sys.path.insert(0, os.path.abspath('django.zip'))
 
 # Google App Engine imports.
 from google.appengine.ext.webapp import util
@@ -24,6 +25,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 import django.core.handlers.wsgi
 
 def main():
+    logging.getLogger().setLevel(logging.DEBUG)
     # Create a Django application for WSGI.
     application = django.core.handlers.wsgi.WSGIHandler()
     # Run the WSGI CGI handler with that application.

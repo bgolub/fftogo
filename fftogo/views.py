@@ -584,10 +584,16 @@ def search(request):
         start = max(int(request.GET.get('start', 0)), 0)
     except:
         start = 0
-    service = request.GET.get('service', None)
     num = int(request.session.get('num', NUM))
+    kwargs = {
+      "start": start,
+      "num": num,
+    }
+    service = request.GET.get('service', None)
+    if service:
+        kwargs["service"] = service
     search = form.data['search']
-    data = f.search(search, num=num, start=start, service=service)
+    data = f.search(search, **kwargs)
     if 'errorCode' in data:
         return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
