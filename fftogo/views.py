@@ -389,7 +389,7 @@ def public(request):
     except:
         data = None
     if not data:
-        data = f.fetch_public_feed(**request.GET)
+        data = f.fetch_public_feed(**querydict_to_dict(request.GET))
         if 'errorCode' in data:
             return error(request, data)
         memcache.set(key, data, PUBLIC_CACHE_TIME)
@@ -416,7 +416,7 @@ def related(request):
         f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_url_feed(url, **request.GET)
+    data = f.fetch_url_feed(url, **querydict_to_dict(request.GET))
     if 'errorCode' in data:
         return error(request, data)
     extra_context = {
@@ -444,7 +444,7 @@ def room(request, nickname):
         f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_room_feed(nickname, **request.GET)
+    data = f.fetch_room_feed(nickname, **querydict_to_dict(request.GET))
     if 'errorCode' in data:
         return error(request, data)
     profile = f.fetch_room_profile(nickname)
@@ -475,7 +475,7 @@ def list(request, nickname):
         request.session['key'])
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_list_feed(nickname, **request.GET)
+    data = f.fetch_list_feed(nickname, **querydict_to_dict(request.GET))
     if 'errorCode' in data:
         return error(request, data)
     profile = f.fetch_list_profile(nickname)
@@ -531,7 +531,7 @@ def rooms(request):
     else:
         start = max(get_integer_argument(request, 'start', 0), 0)
         num = get_integer_argument(request, 'num', NUM)
-        data = f.fetch_rooms_feed(num=num, **request.GET)
+        data = f.fetch_rooms_feed(num=num, **querydict_to_dict(request.GET))
         if not 'errorCode' in data:
             entries = [entry for entry in data['entries'] if not entry['hidden']]
             hidden = [entry for entry in data['entries'] if entry['hidden']]
