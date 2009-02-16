@@ -556,10 +556,10 @@ def search(request):
     Search operates on a 'search' paramater in the GET dict that works the same
     way the FriendFeed search works (who:everyone would search the public feed).
     ''' 
-    if not 'search' in request.GET:
+    if not 'q' in request.GET:
         initial = {}
         if request.session.get('nickname', None):
-            initial['search'] = 'friends:%s' % request.session['nickname']
+            initial['q'] = 'friends:%s' % request.session['nickname']
         extra_context = {
             'form': SearchForm(initial=initial),
         }
@@ -578,8 +578,8 @@ def search(request):
         f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    search = form.data['search']
-    data = f.search(search, **querydict_to_dict(request.GET))
+    q = form.data['q']
+    data = f.search(q, **querydict_to_dict(request.GET))
     if 'errorCode' in data:
         return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
@@ -588,7 +588,7 @@ def search(request):
         'entries': entries,
         'hidden': hidden,
         'next': start + num,
-        'title': search,
+        'title': q,
         'form': form,
     }
     if start > 0:

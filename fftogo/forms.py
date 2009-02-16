@@ -16,7 +16,7 @@ class LoginForm(forms.Form):
     key = forms.CharField(label='Remote Key', widget=forms.PasswordInput)
 
 class SearchForm(forms.Form):
-    search = forms.CharField(label='Query')
+    q = forms.CharField(label='Query')
 
 class SettingsForm(forms.Form):
     fontsize = forms.IntegerField(label='Font size', min_value=1, widget=IntegerWidget)

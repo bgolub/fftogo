@@ -6,7 +6,7 @@
 
 {% block above_content %}
     <form method="get" action="{{ request.path }}">
-        {{ form.search }}
+        {{ form.q }}
         <input type="submit" value="Search" />
     </form>
 {% endblock %}
