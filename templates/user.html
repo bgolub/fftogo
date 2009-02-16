@@ -6,10 +6,6 @@
     {{ profile.name }}
 {% endblock %}
 
-{% block favicon %}
-    <link rel="shortcut icon" href="http://friendfeed.com/{{ profile.nickname }}/picture?size=medium" type="image/jpeg" />
-{% endblock %}
-
 {% block share %}
     {% if not type %}
         {% ifequal request.session.nickname profile.nickname %}

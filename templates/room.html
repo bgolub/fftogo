@@ -6,10 +6,6 @@
     {% firstof profile.name profile.nickname %}
 {% endblock %}
 
-{% block favicon %}
-    <link rel="shortcut icon" href="http://friendfeed.com/rooms/{{ profile.nickname }}/picture?size=medium" type="image/jpeg" />
-{% endblock %}
-
 {% block extra_post %}
     <input type="hidden" name="room" value="{{ profile.nickname }}" />
 {% endblock %}
