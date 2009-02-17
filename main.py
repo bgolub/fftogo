@@ -26,7 +26,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 import django.core.handlers.wsgi
 
 def main():
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.ERROR)
     # Create a Django application for WSGI.
     application = django.core.handlers.wsgi.WSGIHandler()
     # Run the WSGI CGI handler with that application.
