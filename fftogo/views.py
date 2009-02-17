@@ -383,16 +383,9 @@ def public(request):
     f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    key = 'public_%i_%i_%s' % (num, start, service)
-    try:
-        data = memcache.get(key)
-    except:
-        data = None
-    if not data:
-        data = f.fetch_public_feed(**querydict_to_dict(request.GET))
-        if 'errorCode' in data:
-            return error(request, data)
-        memcache.set(key, data, PUBLIC_CACHE_TIME)
+    data = f.fetch_public_feed(**querydict_to_dict(request.GET))
+    if 'errorCode' in data:
+      return error(request, data)
     entries = data['entries']
     extra_context = {
         'entries': entries,
