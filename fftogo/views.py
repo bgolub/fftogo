@@ -326,7 +326,7 @@ def home(request):
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     start = max(get_integer_argument(request, 'start', 0), 0)
-    num = get_integer_argument(request, 'num', NUM)
+    num = get_integer_argument(request, 'num', request.session.get("num", NUM))
     data = f.fetch_home_feed(**request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
