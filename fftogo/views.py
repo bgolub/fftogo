@@ -20,15 +20,25 @@ VIA = settings.VIA
 NO_MEDIA = settings.NO_MEDIA
 
 def querydict_to_dict(arguments):
-    supported = set(['service', 'num', 'start'])
     kwargs = {}
     for name in arguments:
-        if name not in supported:
-            continue
         value = arguments.get(name)
         if value:
             kwargs[str(name)] = value
     return kwargs
+
+def request_to_feed_args_dict(request):
+    # Start with defaults, update with the session, then any arguments
+    supported = set(['service', 'num', 'start'])
+    feed_args_dict = {
+        'num': NUM,
+    }
+    feed_args_dict.update(dict(request.session))
+    feed_args_dict.update(querydict_to_dict(request.GET))
+    for key in feed_args_dict.keys():
+        if not key in supported:
+            del feed_args_dict[key]
+    return feed_args_dict
 
 def get_integer_argument(request, name, default):
     try:
@@ -317,7 +327,7 @@ def home(request):
         request.session['key'])
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_home_feed(**querydict_to_dict(request.GET))
+    data = f.fetch_home_feed(**request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
@@ -325,7 +335,7 @@ def home(request):
     new_start = start
     while len(entries) < num and (new_start - start) / num < 3:
         new_start = new_start + num
-        kwargs = querydict_to_dict(request.GET)
+        kwargs = request_to_feed_args_dict(request)
         kwargs['start'] = new_start
         data = f.fetch_home_feed(**kwargs)
         if 'errorCode' in data:
@@ -383,7 +393,7 @@ def public(request):
     f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_public_feed(**querydict_to_dict(request.GET))
+    data = f.fetch_public_feed(**request_to_feed_args_dict(request))
     if 'errorCode' in data:
       return error(request, data)
     entries = data['entries']
@@ -409,7 +419,7 @@ def related(request):
         f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_url_feed(url, **querydict_to_dict(request.GET))
+    data = f.fetch_url_feed(url, **request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
     extra_context = {
@@ -437,7 +447,7 @@ def room(request, nickname):
         f = friendfeed.FriendFeed()
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_room_feed(nickname, **querydict_to_dict(request.GET))
+    data = f.fetch_room_feed(nickname, **request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
     profile = f.fetch_room_profile(nickname)
@@ -468,7 +478,7 @@ def list(request, nickname):
         request.session['key'])
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    data = f.fetch_list_feed(nickname, **querydict_to_dict(request.GET))
+    data = f.fetch_list_feed(nickname, **request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
     profile = f.fetch_list_profile(nickname)
@@ -524,7 +534,7 @@ def rooms(request):
     else:
         start = max(get_integer_argument(request, 'start', 0), 0)
         num = get_integer_argument(request, 'num', NUM)
-        data = f.fetch_rooms_feed(num=num, **querydict_to_dict(request.GET))
+        data = f.fetch_rooms_feed(num=num, **request_to_feed_args_dict(request))
         if not 'errorCode' in data:
             entries = [entry for entry in data['entries'] if not entry['hidden']]
             hidden = [entry for entry in data['entries'] if entry['hidden']]
@@ -572,7 +582,7 @@ def search(request):
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
     q = form.data['q']
-    data = f.search(q, **querydict_to_dict(request.GET))
+    data = f.search(q, **request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
     entries = [entry for entry in data['entries'] if not entry['hidden']]
@@ -612,7 +622,7 @@ def settings(request):
             'fontsize': int(request.session.get('fontsize', FONT_SIZE)),
             'googlemobileproxy': request.session.get('googlemobileproxy', GMP),
             'newwindow': request.session.get('newwindow', NEW_WINDOW),
-            'num': int(request.session.get('num', 30)),
+            'num': int(request.session.get('num', NUM)),
             'nomedia': request.session.get('nomedia', NO_MEDIA),
         }
         form = SettingsForm(initial=initial)
@@ -668,7 +678,7 @@ def user(request, nickname, type=None):
         subscribed = False
     start = max(get_integer_argument(request, 'start', 0), 0)
     num = get_integer_argument(request, 'num', NUM)
-    kwargs = querydict_to_dict(request.GET)
+    kwargs = request_to_feed_args_dict(request)
     if type == 'comments':
         data = f.fetch_user_comments_feed(nickname, **kwargs)
     elif type == 'likes':
