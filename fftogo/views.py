@@ -534,7 +534,7 @@ def rooms(request):
     else:
         start = max(get_integer_argument(request, 'start', 0), 0)
         num = get_integer_argument(request, 'num', NUM)
-        data = f.fetch_rooms_feed(num=num, **request_to_feed_args_dict(request))
+        data = f.fetch_rooms_feed(**request_to_feed_args_dict(request))
         if not 'errorCode' in data:
             entries = [entry for entry in data['entries'] if not entry['hidden']]
             hidden = [entry for entry in data['entries'] if entry['hidden']]
