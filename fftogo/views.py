@@ -664,14 +664,15 @@ def user(request, nickname, type=None):
         f = friendfeed.FriendFeed(request.session['nickname'],
             request.session['key'])
         key = 'profile/' + request.session['nickname']
-        try:
-            current_user = memcache.get(key)
-        except:
-            current_user = None
+        current_user = memcache.get(key)
         if not current_user:
-            current_user = f.fetch_user_profile(request.session['nickname']) 
-            memcache.set(key, current_user, 60*60)
-        subscriptions = [s['nickname'] for s in current_user['subscriptions']]
+            current_user = {}
+            try:
+                current_user = f.fetch_user_profile(request.session['nickname']) 
+                memcache.set(key, current_user, 60*60)
+            except:
+                pass
+        subscriptions = [s['nickname'] for s in current_user.get('subscriptions', [])]
         subscribed = nickname in subscriptions
     else:
         f = friendfeed.FriendFeed()
