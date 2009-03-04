@@ -31,6 +31,9 @@
                     <a href="{% url entry_undelete request.GET.entry %}"?next={{ request.path }}">Undo</a>
                 {% endif %}
             {% endifequal %}
+            {% ifequal request.GET.message 'edited' %}
+                Comment edited
+            {% endifequal %}
             {% ifequal request.GET.message 'commented' %}
                 Comment created
                 -

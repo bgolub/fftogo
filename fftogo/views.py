@@ -88,12 +88,13 @@ def comment_delete(request, entry, comment):
     data = f.delete_comment(entry, comment)
     if 'errorCode' in data:
         return error(request, data)
-    next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=deleted&entry=%s&comment=%s' % (entry, comment)
-    else:
-        next = next + '?message=deleted&entry=%s&comment=%s' % (entry, comment)
-    next = next + '#%s' % entry
+    next = reverse('entry', args=[entry])
+    args = {
+        'message': 'deleted',
+        'entry': entry,
+        'comment': comment,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), entry)
     return HttpResponseRedirect(next)
 
 def comment_undelete(request, entry, comment):
@@ -111,12 +112,13 @@ def comment_undelete(request, entry, comment):
     data = f.undelete_comment(entry, comment)
     if 'errorCode' in data:
         return error(request, data)
-    next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
-    else:
-        next = next + '?message=commented&entry=%s&comment=%s' % (entry, comment)
-    next = next + '#%s' % comment
+    next = reverse('entry', args=[entry])
+    args = {
+        'message': 'commented',
+        'entry': entry,
+        'comment': comment,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), comment)
     return HttpResponseRedirect(next)
 
 def entry(request, entry):
@@ -164,19 +166,19 @@ def entry_comment(request, entry):
                 return error(request, data)
             next = form.data['next']
             comment = data['id']
-            if not form.data['comment']:
-                if '?' in next:
-                    next = next + '&message=commented&entry=%s&comment=%s' % (entry, comment)
-                else:
-                    next = next + '?message=commented&entry=%s&comment=%s' % (entry, comment)
-            next = next + '#%s' % comment
+            args = {
+                'entry': form.data['entry'],
+                'comment': comment,
+                'message': 'edited' if form.data['comment'] else 'commented',
+            }
+            next += '?%s#%s' % (urllib.urlencode(args), comment)
             return HttpResponseRedirect(next)
     else:
         initial = {
             'body': request.GET.get('body', None),
             'comment': request.GET.get('comment', None),
             'entry': entry,
-            'next': request.GET.get('next', '/'),
+            'next': reverse('entry', args=[entry]),
         }
         form = CommentForm(initial=initial)
     extra_context = {
@@ -199,11 +201,13 @@ def entry_delete(request, entry):
     if 'errorCode' in data:
         return error(request, data)
     next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=deleted&entry=%s' % entry
-    else:
-        next = next + '?message=deleted&entry=%s' % entry
-    next = next + '#%s' % entry
+    if next == reverse('entry', args=[entry]):
+        next = '/'
+    args = {
+        'message': 'deleted',
+        'entry': entry,
+    }
+    next += '?%s' % (urllib.urlencode(args))
     return HttpResponseRedirect(next)
 
 def entry_undelete(request, entry):
@@ -220,12 +224,12 @@ def entry_undelete(request, entry):
     data = f.undelete_entry(entry)
     if 'errorCode' in data:
         return error(request, data)
-    next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=shared&entry=%s' % entry
-    else:
-        next = next + '?message=shared&entry=%s' % entry
-    next = next + '#%s' % entry
+    next = reverse('entry', args=[entry])
+    args = {
+        'message': 'shared',
+        'entry': entry,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), entry)
     return HttpResponseRedirect(next)
 
 def entry_hide(request, entry):
@@ -243,11 +247,11 @@ def entry_hide(request, entry):
     if 'errorCode' in data:
         return error(request, data)
     next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=hidden&entry=%s' % entry
-    else:
-        next = next + '?message=hidden&entry=%s' % entry
-    next = next + '#%s' % entry
+    args = {
+        'message': 'hidden',
+        'entry': entry,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), entry)
     return HttpResponseRedirect(next)
 
 def entry_like(request, entry):
@@ -264,12 +268,12 @@ def entry_like(request, entry):
     data = f.add_like(entry)
     if 'errorCode' in data:
         return error(request, data)
-    next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=liked&entry=%s' % entry
-    else:
-        next = next + '?message=liked&entry=%s' % entry
-    next = next + '#%s' % entry
+    next = reverse('entry', args=[entry])
+    args = {
+        'message': 'liked',
+        'entry': entry,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), entry)
     return HttpResponseRedirect(next)
 
 def entry_unhide(request, entry):
@@ -287,11 +291,11 @@ def entry_unhide(request, entry):
     if 'errorCode' in data:
         return error(request, data)
     next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=un-hidden&entry=%s' % entry
-    else:
-        next = next + '?message=un-hidden&entry=%s' % entry
-    next = next + '#%s' % entry
+    args = {
+        'message': 'un-hidden',
+        'entry': entry,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), entry)
     return HttpResponseRedirect(next)
 
 def entry_unlike(request, entry):
@@ -308,12 +312,12 @@ def entry_unlike(request, entry):
     data = f.delete_like(entry)
     if 'errorCode' in data:
         return error(request, data)
-    next = request.GET.get('next', '/')
-    if '?' in next:
-        next = next + '&message=un-liked&entry=%s' % entry
-    else:
-        next = next + '?message=un-liked&entry=%s' % entry
-    next = next + '#%s' % entry
+    next = reverse('entry', args=[entry])
+    args = {
+        'message': 'un-liked',
+        'entry': entry,
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), entry)
     return HttpResponseRedirect(next)
 
 def home(request):
@@ -326,7 +330,7 @@ def home(request):
     f = friendfeed.FriendFeed(request.session['nickname'],
         request.session['key'])
     start = max(get_integer_argument(request, 'start', 0), 0)
-    num = get_integer_argument(request, 'num', request.session.get("num", NUM))
+    num = get_integer_argument(request, 'num', request.session.get('num', NUM))
     data = f.fetch_home_feed(**request_to_feed_args_dict(request))
     if 'errorCode' in data:
         return error(request, data)
@@ -644,12 +648,12 @@ def share(request):
             data = f.publish_message(request.POST['title'], via=VIA, room=request.POST.get('room', None))
             if 'errorCode' in data:
                 return error(request, data)
-    next = request.POST.get('next', '/')
-    if '?' in next:
-        next = next + '&message=shared&entry=%s' % data['entries'][0]['id']
-    else:
-        next = next + '?message=shared&entry=%s' % data['entries'][0]['id']
-    next += '#%s' % data['entries'][0]['id']
+    next = reverse('entry', args=[data['entries'][0]['id']])
+    args = {
+        'message': 'shared',
+        'entry': data['entries'][0]['id'],
+    }
+    next += '?%s#%s' % (urllib.urlencode(args), data['entries'][0]['id'])
     return HttpResponseRedirect(next)
 
 def user(request, nickname, type=None):
