@@ -42,7 +42,8 @@ def request_to_feed_args_dict(request):
 
 def get_integer_argument(request, name, default):
     try:
-        return int(request.GET.get(name, default))
+        value = int(request.session.get(name, default))
+        return int(request.GET.get(name, value))
     except (TypeError, ValueError):
         return default
 
