@@ -159,7 +159,7 @@
                     </div>
                 {% endif %}
                 <div class="meta">
-                    <span title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</span>
+                    <a class="permalink" href="{% url entry entry.id %}" title="{{ entry.updated}}">{{ entry.updated|timesince }} ago</a>
                     {% if entry.via %}
                         via <a class="via" href="{{ entry.via.url }}">{{ entry.via.name }}</a>
                     {% endif %}
