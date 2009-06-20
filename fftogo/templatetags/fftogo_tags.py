@@ -115,8 +115,8 @@ def liked(value, arg):
 
 @register.filter
 def shorten_comments(value, arg):
-    if len(value) > 4 and len(arg) > 1:
-        return value[:1] + [{'permalink': True, 'num': len(value) - 3},] + value[-2:]
+    if len(value) > 3 and len(arg) > 1:
+        return value[:1] + [{'permalink': True, 'num': len(value) - 2},] + value[-1:]
     return value
 
 @register.filter
