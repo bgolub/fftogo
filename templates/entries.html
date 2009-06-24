@@ -270,16 +270,16 @@
 {% endblock %}
 
 {% block below_content %}
-    {%if not permalink %}
-        <div id="nav">
+    <div id="nav">
+        {%if not permalink %}
             {% if has_previous %}
                 7
                 <a href="{{ request.path }}?start={{ previous }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}" accesskey="7">Previous</a>
             {% endif %}
             9
             <a href="{{ request.path }}?start={{ next }}{% if request.GET.service %}&service={{ request.GET.service }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.url %}&url={{ request.GET.url }}{% endif %}" accesskey="9">Next</a>
-            *
-            <a href="#top" accesskey="*">Top</a>
-        </div>
-    {% endif %}
+        {% endif %}
+        *
+        <a href="#top" accesskey="*">Top</a>
+    </div>
 {% endblock %}
